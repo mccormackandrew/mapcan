@@ -1,0 +1,12 @@
+Package: mapcan
+Type: Package
+Title: Draw Geographical Maps of Canada.
+Version: 0.1.0
+Authors@R: person("Andrew", "McCormack", email = "mccormack.andy@gmail.com", role = c("aut", "cre"))
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: Tools for plotting maps of Canada.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+
+
