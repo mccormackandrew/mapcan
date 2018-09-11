@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+inst/doc
+
+#directories
+/data-raw/shapefile_data*
+
