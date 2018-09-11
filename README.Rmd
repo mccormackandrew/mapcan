@@ -16,5 +16,5 @@ knitr::opts_chunk$set(
 
 # mapcan
 
-mapcan is an R package that provides convenient tools for plotting a variety of Canadian maps. 
+`mapcan` is an R package that provides convenient tools for plotting a variety of Canadian maps with the `ggplot2` package. 
 

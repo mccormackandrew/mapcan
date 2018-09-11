@@ -7,7 +7,7 @@ p_load(tidyverse, rgdal, rgeos, rmapshaper, sp)
 provinces_territories <- rgdal::readOGR("data-raw/shapefile_data/provinces_territories", "lpr_000b16a_e")
 
 # Shapefile is unnecessarily large for creating plots, make smaller
-provinces_territories <- rmapshaper::ms_simplify(provinces_territories, keep = 0.03, keep_shapes = T)
+provinces_territories <- rmapshaper::ms_simplify(provinces_territories, keep = 0.01, keep_shapes = T)
 
 # Add projection
 provinces_territories <- sp::spTransform(provinces_territories,
@@ -20,17 +20,19 @@ provinces_territories <- rgeos::gBuffer(provinces_territories, byid=TRUE, width=
 provinces_territories_data <- provinces_territories@data
 
 # Fortify into dataset that can be used in ggplot
-provinces_territories <- dplyr::fortify(provinces_territories,
+provinces_territories <- ggplot2::fortify(provinces_territories,
                                  region = "PRNAME")
 
 # Merge other data back in
 provinces_territories <- dplyr::left_join(provinces_territories, provinces_territories_data, by = c("id" = "PRNAME"))
 
-ggplot(provinces_territories, aes(long, lat, group = group)) +
-  geom_polygon(fill = "beige", colour = "black", size = 0.3) +
-  coord_fixed()
+names(provinces_territories) <- c("long", "lat", "order", "hole",
+                                  "piece", "pr", "group", "sgc_code",
+                                  "pr_english", "pr_french",
+                                  "pr_abbr_english", "pr_abbr_french")
 
-saveRDS(provinces_territories, "provinces_territories.Rdata")
+# Save R data object into data/
+use_data(provinces_territories, overwrite = T)
 
 
 # Federal ridings ----------------------------------------
@@ -59,14 +61,23 @@ federal_ridings <- ggplot2::fortify(federal_ridings,
 # Merge other data back in
 federal_ridings <- dplyr::left_join(federal_ridings, federal_ridings_data, by = c("id" = "FEDUID"))
 
-# Save
-saveRDS(federal_ridings, "federal_ridings.Rdata")
+
+
+names(federal_ridings) <- c("long", "lat", "order", "hole",
+                            "piece", "code", "group", "riding_name",
+                            "riding_name_english", "riding_name_french",
+                            "province_sgc_code", "province")
+
+# Save federal_ridings R data object into data/
+use_data(federal_ridings)
+
+
 
 
 # Census divisions 2016 -------------------------------
 
 # Read in shapefile
-census_divisions_2016_original <- rgdal::readOGR("data-raw/shapefile_data/census_divisions_2016", "lcd_000b16a_e")
+census_divisions_2016 <- rgdal::readOGR("data-raw/shapefile_data/census_divisions_2016", "lcd_000b16a_e")
 
 # Shapefile is unnecessarily large for creating plots, make smaller
 census_divisions_2016 <- rmapshaper::ms_simplify(census_divisions_2016, keep = 0.02, keep_shapes = T)
@@ -88,5 +99,11 @@ census_divisions_2016 <- ggplot2::fortify(census_divisions_2016,
 # Merge other data back in
 census_divisions_2016 <- dplyr::left_join(census_divisions_2016, census_divisions_2016_data, by = c("id" = "CDUID"))
 
-# Save
-saveRDS(census_divisions_2016, "census_divisions_2016.Rdata")
+
+names(census_divisions_2016) <- c("long", "lat", "order", "hole", "piece", "id", "group", "census_division_name",
+                                  "census_division_type", "province_sgc_code", "province")
+
+# Save census_divisions_2016 R data object into data/
+use_data(census_divisions_2016)
+
+
