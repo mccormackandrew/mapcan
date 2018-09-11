@@ -1,4 +1,6 @@
-In shapefiles_processing.R, shapefiles are processed into more manageable sizes and formats. Because these shapefiles are very large, I do not include them here. The links below are where the shapefiles were downloaded.
+In shapefiles_processing.R, shapefiles are processed into more manageable sizes and formats. 
+Because these shapefiles are very large, I do not include them here. 
+The links below are where the shapefiles were downloaded.
 
 Federal ridings (2013 Representation , census regions 2016, and provinces/territories:
 https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm
