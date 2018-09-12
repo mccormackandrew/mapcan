@@ -18,3 +18,36 @@ knitr::opts_chunk$set(
 
 `mapcan` is an R package that provides convenient tools for plotting a variety of Canadian maps with the `ggplot2` package. 
 
+```{r}
+library(ggplot2)
+library(paletteer)
+load(file = "data/federal_riding_bins.rda")
+```
+
+
+## Tile grid map of Canadian federal electoral ridings
+
+```{r echo = FALSE}
+federal_riding_bins$province <- factor(federal_riding_bins$province, levels = c("BC", "AB", "SK", "MB", "ON", "QC", "NL", "NB", "PE", "NS"))
+
+ggplot(federal_riding_bins, aes(xmin = x, ymin = y, xmax = x + 0.8, ymax = y + 0.8, fill = province)) +
+  geom_rect() +
+  paletteer::scale_fill_paletteer_d("yarrr", "info2") +
+  coord_fixed() +
+  scale_y_reverse() +
+  theme_light() +
+  theme(panel.grid = element_blank(),
+        panel.border = element_blank(),
+        axis.text = element_blank(), 
+        axis.title = element_blank(),
+        legend.position = "bottom",
+        ) +
+  guides(fill = guide_legend(keywidth = 0.8, keyheight = 0.8,
+                             nrow = 1, title = NULL))
+```
+
+```{r include = FALSE}
+paletteer::palettes_d_names
+paletteer::paletteer_d("ggsci", "category10_d3")
+```
+
