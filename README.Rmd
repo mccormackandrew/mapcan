@@ -28,10 +28,16 @@ load(file = "data/federal_riding_bins.rda")
 ## Tile grid map of Canadian federal electoral ridings
 
 ```{r echo = FALSE}
+
+federal_riding_bins$y <- federal_riding_bins$y*2
+federal_riding_bins$x <- federal_riding_bins$x*2
+
+
 federal_riding_bins$province <- factor(federal_riding_bins$province, levels = c("BC", "AB", "SK", "MB", "ON", "QC", "NL", "NB", "PE", "NS"))
 
-ggplot(federal_riding_bins, aes(xmin = x, ymin = y, xmax = x + 0.8, ymax = y + 0.8, fill = province)) +
-  geom_rect() +
+ggplot(federal_riding_bins, aes(x = x, y = y, fill = province)) +
+  geom_raster() +
+  geom_tile(colour = "white", size = 1.1 , fill = NA)+
   paletteer::scale_fill_paletteer_d("yarrr", "info2") +
   coord_fixed() +
   scale_y_reverse() +
@@ -44,6 +50,8 @@ ggplot(federal_riding_bins, aes(xmin = x, ymin = y, xmax = x + 0.8, ymax = y + 0
         ) +
   guides(fill = guide_legend(keywidth = 0.8, keyheight = 0.8,
                              nrow = 1, title = NULL))
+
+
 ```
 
 ```{r include = FALSE}
