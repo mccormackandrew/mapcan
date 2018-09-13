@@ -18,10 +18,14 @@ knitr::opts_chunk$set(
 
 `mapcan` is an R package that provides convenient tools for plotting a variety of Canadian maps with the `ggplot2` package. 
 
-```{r}
+```{r include = FALSE}
 library(ggplot2)
+library(tidyverse)
 library(paletteer)
 load(file = "data/federal_riding_bins.rda")
+load(file = "data/federal_ridings_carto_df.rda")
+load(file = "data/federal_ridings.rda")
+load(file = "data/riding_info.rda")
 ```
 
 
@@ -57,5 +61,39 @@ ggplot(federal_riding_bins, aes(x = x, y = y, fill = province)) +
 ```{r include = FALSE}
 paletteer::palettes_d_names
 paletteer::paletteer_d("ggsci", "category10_d3")
+```
+## 2015 Canadian federal election results
+
+```{r echo = FALSE}
+federal_ridings <- left_join(federal_ridings, riding_info, by = c("code" = "riding_code"))
+
+ggplot(federal_ridings, aes(long, lat, group = group, fill = party)) +
+  geom_polygon() +
+  scale_fill_manual(values = c("darkslategray3", "dodgerblue3", "green", "firebrick1", "darkorange1")) +
+  theme_light() +
+  theme(panel.grid = element_blank(),
+        panel.border = element_blank(),
+        axis.text = element_blank(), 
+        axis.title = element_blank(),
+        legend.title = element_blank()) +
+  coord_fixed()
+```
+
+
+
+## 2015 Canadian federal election results
+### Cartogram distorted by population
+
+```{r echo = FALSE}
+ggplot(federal_ridings_carto_df, aes(long, lat, group = group, fill = party)) +
+  geom_polygon() +
+  scale_fill_manual(values = c("darkslategray3", "dodgerblue3", "olivedrab3", "firebrick1", "darkorange1")) +
+  theme_light() +
+  theme(panel.grid = element_blank(),
+        panel.border = element_blank(),
+        axis.text = element_blank(), 
+        axis.title = element_blank(),
+        legend.title = element_blank()) +
+  coord_fixed()
 ```
 

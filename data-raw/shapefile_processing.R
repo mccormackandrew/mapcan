@@ -16,6 +16,10 @@ provinces_territories <- sp::spTransform(provinces_territories,
 # Use zero-width buffer to clean up topology problems
 provinces_territories <- rgeos::gBuffer(provinces_territories, byid=TRUE, width=0)
 
+# Save spdf
+provinces_territories_spdf <- provinces_territories
+use_data(provinces_territories_spdf)
+
 # Save data to merge
 provinces_territories_data <- provinces_territories@data
 
@@ -50,6 +54,10 @@ federal_ridings <- sp::spTransform(federal_ridings,
 
 # Use zero-width buffer to clean up topology problems
 federal_ridings <- rgeos::gBuffer(federal_ridings, byid=TRUE, width=0)
+
+# Save spdf
+federal_ridings_spdf <- federal_ridings
+use_data(federal_ridings_spdf)
 
 # Save data to merge
 federal_ridings_data <- federal_ridings@data
@@ -88,6 +96,10 @@ census_divisions_2016 <- sp::spTransform(census_divisions_2016,
 
 # Use zero-width buffer to clean up topology problems
 census_divisions_2016 <- rgeos::gBuffer(census_divisions_2016, byid=TRUE, width=0)
+
+# Save spdf
+census_divisions_2016_spdf <- census_divisions_2016
+use_data(census_divisions_2016_spdf)
 
 # Save data to merge
 census_divisions_2016_data <- census_divisions_2016@data
