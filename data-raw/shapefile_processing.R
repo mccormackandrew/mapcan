@@ -1,6 +1,13 @@
 library(pacman)
 p_load(tidyverse, rgdal, rgeos, rmapshaper, sp)
 
+## Province codes are available in 4 formats:
+# sgc_code
+# pr_english
+# pr_french
+# pr_alpha
+
+
 # Provinces and territories -------------------------------
 
 # Read in shapefile
@@ -25,18 +32,36 @@ provinces_territories_data <- provinces_territories@data
 
 # Fortify into dataset that can be used in ggplot
 provinces_territories <- ggplot2::fortify(provinces_territories,
-                                 region = "PRNAME")
+                                 region = "PRUID")
 
 # Merge other data back in
-provinces_territories <- dplyr::left_join(provinces_territories, provinces_territories_data, by = c("id" = "PRNAME"))
+provinces_territories <- dplyr::left_join(provinces_territories,
+                                          provinces_territories_data[ , c("PRUID", "PRENAME", "PRFNAME")],
+                                          by = c("id" = "PRUID"))
 
 names(provinces_territories) <- c("long", "lat", "order", "hole",
-                                  "piece", "pr", "group", "sgc_code",
-                                  "pr_english", "pr_french",
-                                  "pr_abbr_english", "pr_abbr_french")
+                                  "piece", "sgc_code", "group",
+                                  "pr_english", "pr_french")
+
+provinces_territories$pr_alpha <- dplyr::recode(provinces_territories$sgc_code,
+       `10` = "NL",
+       `11` = "PE",
+       `12` = "NS",
+       `13` = "NB",
+       `24` = "QC",
+       `35` = "ON",
+       `46` = "MB",
+       `47` = "SK",
+       `48` = "AB",
+       `59` = "BC",
+       `60` = "YT",
+       `61` = "NT",
+       `62` = "NU")
 
 # Save R data object into data/
 use_data(provinces_territories, overwrite = T)
+
+
 
 
 # Federal ridings ----------------------------------------
@@ -45,9 +70,9 @@ use_data(provinces_territories, overwrite = T)
 federal_ridings <- rgdal::readOGR("data-raw/shapefile_data/federal_ridings", "lfed000b16a_e")
 
 # Shapefile is unnecessarily large for creating plots, make smaller
-federal_ridings <- rmapshaper::ms_simplify(federal_ridings, keep = 0.05, keep_shapes = T)
+federal_ridings <- rmapshaper::ms_simplify(federal_ridings, keep = 0.01, keep_shapes = T)
 
-federal_ridings_backup <- federal_ridings
+
 # Add a projection
 federal_ridings <- sp::spTransform(federal_ridings,
                                CRS("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"))
@@ -57,6 +82,7 @@ federal_ridings <- rgeos::gBuffer(federal_ridings, byid=TRUE, width=0)
 
 # Save spdf
 federal_ridings_spdf <- federal_ridings
+
 use_data(federal_ridings_spdf)
 
 # Save data to merge
@@ -69,15 +95,69 @@ federal_ridings <- ggplot2::fortify(federal_ridings,
 # Merge other data back in
 federal_ridings <- dplyr::left_join(federal_ridings, federal_ridings_data, by = c("id" = "FEDUID"))
 
+# Remove english-french riding and province names
 
+federal_ridings <- federal_ridings %>%
+  dplyr::select(-PRNAME, -FEDNAME)
 
 names(federal_ridings) <- c("long", "lat", "order", "hole",
-                            "piece", "code", "group", "riding_name",
+                            "piece", "riding_code", "group",
                             "riding_name_english", "riding_name_french",
-                            "province_sgc_code", "province")
+                            "sgc_code")
+
+# Create pr_english variable
+federal_ridings$pr_english <- dplyr::recode(federal_ridings$sgc_code,
+              `10` = "Newfoundland and Labrador",
+              `11` = "Prince Edward Island",
+              `12` = "Nova Scotia",
+              `13` = "New Brunswick",
+              `24` = "Quebec",
+              `35` = "Ontario",
+              `46` = "Manitoba",
+              `47` = "Saskatchewan",
+              `48` = "Alberta",
+              `59` = "British Columbia",
+              `60` = "Yukon",
+              `61` = "Northwest Territories",
+              `62` = "Nunavut")
+
+# Create pr_french variable
+federal_ridings$pr_french <- dplyr::recode(federal_ridings$sgc_code,
+                                            `10` = "Terre-Neuve-et-Labrador",
+                                            `11` = "Île-du-Prince-Édouard",
+                                            `12` = "Nouvelle-Écosse",
+                                            `13` = "Nouveau-Brunswick",
+                                            `24` = "Québec",
+                                            `35` = "Ontario",
+                                            `46` = "Manitoba",
+                                            `47` = "Saskatchewan",
+                                            `48` = "Alberta",
+                                            `59` = "Colombie-Britannique",
+                                            `60` = "Yukon",
+                                            `61` = "Territoires du Nord-Ouest",
+                                            `62` = "Nunavut")
+
+
+# Create pr_alpha variable
+federal_ridings$pr_alpha <- dplyr::recode(federal_ridings$sgc_code,
+                                                `10` = "NL",
+                                                `11` = "PE",
+                                                `12` = "NS",
+                                                `13` = "NB",
+                                                `24` = "QC",
+                                                `35` = "ON",
+                                                `46` = "MB",
+                                                `47` = "SK",
+                                                `48` = "AB",
+                                                `59` = "BC",
+                                                `60` = "YT",
+                                                `61` = "NT",
+                                                `62` = "NU")
 
 # Save federal_ridings R data object into data/
 use_data(federal_ridings)
+
+
 
 
 
@@ -88,7 +168,7 @@ use_data(federal_ridings)
 census_divisions_2016 <- rgdal::readOGR("data-raw/shapefile_data/census_divisions_2016", "lcd_000b16a_e")
 
 # Shapefile is unnecessarily large for creating plots, make smaller
-census_divisions_2016 <- rmapshaper::ms_simplify(census_divisions_2016, keep = 0.02, keep_shapes = T)
+census_divisions_2016 <- rmapshaper::ms_simplify(census_divisions_2016, keep = 0.01, keep_shapes = T)
 
 # Add projection
 census_divisions_2016 <- sp::spTransform(census_divisions_2016,
@@ -99,6 +179,7 @@ census_divisions_2016 <- rgeos::gBuffer(census_divisions_2016, byid=TRUE, width=
 
 # Save spdf
 census_divisions_2016_spdf <- census_divisions_2016
+
 use_data(census_divisions_2016_spdf)
 
 # Save data to merge

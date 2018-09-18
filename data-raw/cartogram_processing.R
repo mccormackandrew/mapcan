@@ -64,12 +64,12 @@ election_results$riding_code <- as.character(election_results$riding_code)
 riding_info <- left_join(election_results, riding_data)
 
 
-
+use_data(riding_info)
 
 ## Make the cartogram--------------------
 
 # Import map data
-federal_ridings_spdf <- readRDS("data/federal_ridings_spdf.Rdata")
+load("data/federal_ridings_spdf.rda")
 
 # Merge in riding population and election data
 federal_ridings_spdf <- merge(federal_ridings_spdf, riding_info, by.x="FEDUID",by.y="riding_code")
@@ -87,5 +87,7 @@ federal_ridings_carto <- gBuffer(federal_ridings_carto, byid=TRUE, width=0)
 federal_ridings_carto_df <- fortify(federal_ridings_carto,
                                     region = "FEDUID")
 
+federal_ridings_carto_df <- left_join(federal_ridings_carto_df, riding_info, by = c("id" = "riding_code"))
+
 # Save data
-use_data(federal_ridings_carto_df)
+use_data(federal_ridings_carto_df, overwrite = T)
