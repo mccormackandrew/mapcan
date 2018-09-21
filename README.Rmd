@@ -22,27 +22,26 @@ knitr::opts_chunk$set(
 library(ggplot2)
 library(tidyverse)
 library(paletteer)
-load(file = "data/federal_riding_bins.rda")
-load(file = "data/federal_ridings_carto_df.rda")
+load(file = "data/provinces_territories_carto_df.rda")
+load(file = "data/provinces_noterr_carto_df.rda")
 load(file = "data/federal_ridings.rda")
 load(file = "data/riding_info.rda")
+load(file = "data/federal_riding_bins.rda")
 ```
 
 
 ## Tile grid map of Canadian federal electoral ridings
 
 ```{r echo = FALSE}
-
 federal_riding_bins$y <- federal_riding_bins$y*2
 federal_riding_bins$x <- federal_riding_bins$x*2
-
 
 federal_riding_bins$province <- factor(federal_riding_bins$province, levels = c("BC", "AB", "SK", "MB", "ON", "QC", "NL", "NB", "PE", "NS"))
 
 ggplot(federal_riding_bins, aes(x = x, y = y, fill = province)) +
   geom_raster() +
-  geom_tile(colour = "white", size = 1.1 , fill = NA)+
-  paletteer::scale_fill_paletteer_d("yarrr", "info2") +
+  geom_tile(colour = "white", size = 1.5, fill = NA)+
+  paletteer::scale_fill_paletteer_d("ggthemes", "tableau_greenorange12") +
   coord_fixed() +
   scale_y_reverse() +
   theme_light() +
@@ -54,8 +53,6 @@ ggplot(federal_riding_bins, aes(x = x, y = y, fill = province)) +
         ) +
   guides(fill = guide_legend(keywidth = 0.8, keyheight = 0.8,
                              nrow = 1, title = NULL))
-
-
 ```
 
 ```{r include = FALSE}
@@ -65,7 +62,7 @@ paletteer::paletteer_d("ggsci", "category10_d3")
 ## 2015 Canadian federal election results
 
 ```{r echo = FALSE}
-federal_ridings <- left_join(federal_ridings, riding_info, by = c("code" = "riding_code"))
+federal_ridings <- left_join(federal_ridings, riding_info, by = c("riding_code" = "riding_code"))
 
 ggplot(federal_ridings, aes(long, lat, group = group, fill = party)) +
   geom_polygon() +
@@ -81,19 +78,32 @@ ggplot(federal_ridings, aes(long, lat, group = group, fill = party)) +
 
 
 
-## 2015 Canadian federal election results
+## Provincial/territorial cartogram
 ### Cartogram distorted by population
-
 ```{r echo = FALSE}
-ggplot(federal_ridings_carto_df, aes(long, lat, group = group, fill = party)) +
+ggplot(provinces_territories_carto_df, aes(long, lat, group = group, fill = population)) +
   geom_polygon() +
-  scale_fill_manual(values = c("darkslategray3", "dodgerblue3", "olivedrab3", "firebrick1", "darkorange1")) +
   theme_light() +
+  scale_fill_gradient(low = "darkslategray", high = "darkslategray3") + 
   theme(panel.grid = element_blank(),
         panel.border = element_blank(),
         axis.text = element_blank(), 
         axis.title = element_blank(),
         legend.title = element_blank()) +
   coord_fixed()
+```
+### Cartogram distorted by population (no territories)
+```{r }
+ggplot(provinces_noterr_carto_df, aes(long, lat, group = group, fill = population)) +
+  geom_polygon() +
+  theme_light() +
+  scale_fill_gradient(low = "wheat4", high = "wheat2") + 
+  theme(panel.grid = element_blank(),
+        panel.border = element_blank(),
+        axis.text = element_blank(), 
+        axis.title = element_blank(),
+        legend.title = element_blank()) +
+  coord_fixed()
+
 ```
 

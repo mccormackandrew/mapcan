@@ -2,8 +2,10 @@ Package: mapcan
 Type: Package
 Title: Draw Geographical Maps of Canada.
 Version: 0.1.0
-Authors@R: person("Andrew", "McCormack", email = "mccormack.andy@gmail.com", role = c("aut", "cre"))
-Maintainer: The package maintainer <yourself@somewhere.net>
+Authors@R: c(
+    person("Andrew", "McCormack", email = "mccormack.andy@gmail.com", role = c("aut", "cre")),
+    person("Aaron", "Erlich", email = "aaron.erlich@mcgill.ca", role = c("aut")))
+Maintainer: Andrew McCormack <mccormack.andy@gmail.com>
 Description: Tools for plotting maps of Canada.
 License: What license is it under?
 Encoding: UTF-8
