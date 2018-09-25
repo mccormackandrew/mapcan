@@ -18,15 +18,19 @@ knitr::opts_chunk$set(
 
 `mapcan` is an R package that provides convenient tools for plotting a variety of Canadian maps with the `ggplot2` package. 
 
-```{r include = FALSE}
+```{r echo = FALSE}
 library(ggplot2)
 library(tidyverse)
 library(paletteer)
+library(scales)
+library(gridExtra)
 load(file = "data/provinces_territories_carto_df.rda")
 load(file = "data/provinces_noterr_carto_df.rda")
 load(file = "data/federal_ridings.rda")
 load(file = "data/riding_info.rda")
 load(file = "data/federal_riding_bins.rda")
+load(file = "data/census_divisions_2016_carto_df.rda")
+load(file = "data/census_divisions_2016_noterr_carto_df.rda")
 ```
 
 
@@ -79,9 +83,9 @@ ggplot(federal_ridings, aes(long, lat, group = group, fill = party)) +
 
 
 ## Provincial/territorial cartogram
-### Cartogram distorted by population
+
 ```{r echo = FALSE}
-ggplot(provinces_territories_carto_df, aes(long, lat, group = group, fill = population)) +
+ggprovincecatro <- ggplot(provinces_territories_carto_df, aes(long, lat, group = group, fill = population)) +
   geom_polygon() +
   theme_light() +
   scale_fill_gradient(low = "darkslategray", high = "darkslategray3") + 
@@ -90,20 +94,52 @@ ggplot(provinces_territories_carto_df, aes(long, lat, group = group, fill = popu
         axis.text = element_blank(), 
         axis.title = element_blank(),
         legend.title = element_blank()) +
-  coord_fixed()
-```
-### Cartogram distorted by population (no territories)
-```{r }
-ggplot(provinces_noterr_carto_df, aes(long, lat, group = group, fill = population)) +
+  coord_fixed() +
+  ggtitle("Provincial/territorial cartogram\n(distorted by population)")
+
+ggprovincenoterrcatro <- ggplot(provinces_noterr_carto_df, aes(long, lat, group = group, fill = population)) +
   geom_polygon() +
   theme_light() +
-  scale_fill_gradient(low = "wheat4", high = "wheat2") + 
+  scale_fill_gradient(low = "darkslategray", high = "darkslategray3") + 
   theme(panel.grid = element_blank(),
         panel.border = element_blank(),
         axis.text = element_blank(), 
         axis.title = element_blank(),
         legend.title = element_blank()) +
-  coord_fixed()
+  coord_fixed() +
+  ggtitle("Provincial/territorial cartogram\n(distorted by population),\nterritories excluded")
 
+```
+## Census division cartograms
+```{r echo = FALSE}
+ggplot(census_divisions_2016_carto_df, aes(long, lat, group = group, fill = population_2016)) +
+  geom_polygon() +
+  theme_light() +
+  scale_fill_gradient(low = "darkslategray", high = "darkslategray3", 
+                      labels = scales::comma,
+                      breaks = seq(0, 2731571, 500000)) + 
+  guides(fill = guide_colorbar(barwidth = 1, barheight = 8, label.hjust = 1.2)) +
+  theme(panel.grid = element_blank(),
+        panel.border = element_blank(),
+        axis.text = element_blank(), 
+        axis.title = element_blank(),
+        legend.title = element_blank()) +
+  coord_fixed() +
+  ggtitle("2016 census divisions cartogram (distorted by population)") 
+
+ggplot(census_divisions_2016_noterr_carto_df, aes(long, lat, group = group, fill = population_2016)) +
+  geom_polygon() +
+  theme_light() +
+  scale_fill_gradient(low = "darkslategray", high = "darkslategray3", 
+                      labels = scales::comma,
+                      breaks = seq(0, 2731571, 500000)) + 
+  guides(fill = guide_colorbar(barwidth = 1, barheight = 8, label.hjust = 1.2)) +
+  theme(panel.grid = element_blank(),
+        panel.border = element_blank(),
+        axis.text = element_blank(), 
+        axis.title = element_blank(),
+        legend.title = element_blank()) +
+  coord_fixed() +
+  ggtitle("2016 census divisions cartogram (distorted by population), territories excluded") 
 ```
 

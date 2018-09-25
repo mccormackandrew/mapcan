@@ -15,25 +15,64 @@ p_load(tidyverse, rgdal, rgeos, rmapshaper,
 
 # Import map data
 load("data/provinces_territories_spdf.rda")
+load("data/province_pop_annual.rda")
 
-mapcan::province_pop_annual
 # Merge in riding population and election data
-federal_ridings_spdf <- merge(provinces_territories_spdf, riding_info, by.x="FEDUID",by.y="riding_code")
+provinces_territories <- merge(provinces_territories_spdf,
+                              province_pop_annual[province_pop_annual$year == 2016, ],
+                              by.x="PRENAME",by.y="province")
 
+provinces_territories
 # Compute area of each federal riding in km^2 area (unit: meters -> convert to square km)
-federal_ridings_spdf$area <- gArea(federal_ridings_spdf, byid=TRUE) / (1000000)
+provinces_territories$area <- gArea(provinces_territories, byid=TRUE) / (1000000)
 
 # Generate cartogram
-federal_ridings_carto <- getcartr::quick.carto(federal_ridings_spdf, federal_ridings_spdf$population_2016, res = 256)
+provinces_territories_carto <- getcartr::quick.carto(provinces_territories, provinces_territories$population, res = 256)
 
 # Use buffer so fortify works
-federal_ridings_carto <- gBuffer(federal_ridings_carto, byid=TRUE, width=0)
+provinces_territories_carto <- gBuffer(provinces_territories_carto, byid=TRUE, width=0)
 
 # Fortify into dataframe that ggplot can use
-federal_ridings_carto_df <- fortify(federal_ridings_carto,
-                                    region = "FEDUID")
+provinces_territories_carto_df <- fortify(provinces_territories_carto,
+                                    region = "PRENAME")
 
-federal_ridings_carto_df <- left_join(federal_ridings_carto_df, riding_info, by = c("id" = "riding_code"))
+
+provinces_territories_carto_df <- left_join(provinces_territories_carto_df,
+                                            province_pop_annual[province_pop_annual$year == 2016, ],
+                                            by = c("id" = "province"))
 
 # Save data
-use_data(federal_ridings_carto_df, overwrite = T)
+use_data(provinces_territories_carto_df, overwrite = T)
+
+
+
+## Make provinces (no territories) cartogram--------------------
+
+# Merge in riding population and election data
+provinces_noterr <- merge(provinces_territories_spdf[!(provinces_territories_spdf$PREABBR %in% c("Y.T.", "Nvt.", "N.W.T.")), ],
+                               province_pop_annual[province_pop_annual$year == 2016, ],
+                               by.x="PRENAME",by.y="province")
+
+
+# Compute area of each federal riding in km^2 area (unit: meters -> convert to square km)
+provinces_noterr$area <- gArea(provinces_noterr, byid=TRUE) / (1000000)
+
+# Generate cartogram
+provinces_noterr_carto <- getcartr::quick.carto(provinces_noterr, provinces_noterr$population, res = 256)
+
+# Use buffer so fortify works
+provinces_noterr_carto <- gBuffer(provinces_noterr_carto, byid=TRUE, width=0)
+
+# Fortify into dataframe that ggplot can use
+provinces_noterr_carto <- fortify(provinces_noterr_carto,
+                                          region = "PRENAME")
+
+
+provinces_noterr_carto <- left_join(provinces_noterr_carto,
+                                            province_pop_annual[province_pop_annual$year == 2016, ],
+                                            by = c("id" = "province"))
+
+# Save data
+use_data(provinces_noterr_carto_df, overwrite = T)
+
+
