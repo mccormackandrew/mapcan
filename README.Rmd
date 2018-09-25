@@ -85,10 +85,10 @@ ggplot(federal_ridings, aes(long, lat, group = group, fill = party)) +
 ## Provincial/territorial cartogram
 
 ```{r echo = FALSE}
-ggprovincecatro <- ggplot(provinces_territories_carto_df, aes(long, lat, group = group, fill = population)) +
+ggplot(provinces_territories_carto_df, aes(long, lat, group = group, fill = population)) +
   geom_polygon() +
   theme_light() +
-  scale_fill_gradient(low = "darkslategray", high = "darkslategray3") + 
+  scale_fill_gradient(low = "indianred1", high = "darkred") + 
   theme(panel.grid = element_blank(),
         panel.border = element_blank(),
         axis.text = element_blank(), 
@@ -97,10 +97,10 @@ ggprovincecatro <- ggplot(provinces_territories_carto_df, aes(long, lat, group =
   coord_fixed() +
   ggtitle("Provincial/territorial cartogram\n(distorted by population)")
 
-ggprovincenoterrcatro <- ggplot(provinces_noterr_carto_df, aes(long, lat, group = group, fill = population)) +
+ggplot(provinces_noterr_carto_df, aes(long, lat, group = group, fill = population)) +
   geom_polygon() +
   theme_light() +
-  scale_fill_gradient(low = "darkslategray", high = "darkslategray3") + 
+  scale_fill_gradient(low = "indianred1", high = "darkred") + 
   theme(panel.grid = element_blank(),
         panel.border = element_blank(),
         axis.text = element_blank(), 

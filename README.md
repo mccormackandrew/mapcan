@@ -49,7 +49,4 @@ Tile grid map of Canadian federal electoral ridings
 Provincial/territorial cartogram
 --------------------------------
 
-Census division cartograms
---------------------------
-
-![](README-unnamed-chunk-7-1.png)![](README-unnamed-chunk-7-2.png)
+![](README-unnamed-chunk-6-1.png)![](README-unnamed-chunk-6-2.png) \#\# Census division cartograms ![](README-unnamed-chunk-7-1.png)![](README-unnamed-chunk-7-2.png)
