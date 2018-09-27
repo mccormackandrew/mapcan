@@ -2,7 +2,7 @@ library(pacman)
 p_load(tidyverse, rgdal, rgeos, rmapshaper, sp)
 
 ## Province codes are available in 4 formats:
-# sgc_code
+# pr_sgc_code
 # pr_english
 # pr_french
 # pr_alpha
@@ -40,10 +40,11 @@ provinces_territories <- dplyr::left_join(provinces_territories,
                                           by = c("id" = "PRUID"))
 
 names(provinces_territories) <- c("long", "lat", "order", "hole",
-                                  "piece", "sgc_code", "group",
+                                  "piece", "pr_sgc_code", "group",
                                   "pr_english", "pr_french")
 
-provinces_territories$pr_alpha <- dplyr::recode(provinces_territories$sgc_code,
+
+provinces_territories$pr_alpha <- dplyr::recode(provinces_territories$pr_sgc_code,
        `10` = "NL",
        `11` = "PE",
        `12` = "NS",
@@ -103,10 +104,10 @@ federal_ridings <- federal_ridings %>%
 names(federal_ridings) <- c("long", "lat", "order", "hole",
                             "piece", "riding_code", "group",
                             "riding_name_english", "riding_name_french",
-                            "sgc_code")
+                            "pr_sgc_code")
 
 # Create pr_english variable
-federal_ridings$pr_english <- dplyr::recode(federal_ridings$sgc_code,
+federal_ridings$pr_english <- dplyr::recode(federal_ridings$pr_sgc_code,
               `10` = "Newfoundland and Labrador",
               `11` = "Prince Edward Island",
               `12` = "Nova Scotia",
@@ -122,7 +123,7 @@ federal_ridings$pr_english <- dplyr::recode(federal_ridings$sgc_code,
               `62` = "Nunavut")
 
 # Create pr_french variable
-federal_ridings$pr_french <- dplyr::recode(federal_ridings$sgc_code,
+federal_ridings$pr_french <- dplyr::recode(federal_ridings$pr_sgc_code,
                                             `10` = "Terre-Neuve-et-Labrador",
                                             `11` = "Île-du-Prince-Édouard",
                                             `12` = "Nouvelle-Écosse",
@@ -155,11 +156,7 @@ federal_ridings$pr_alpha <- dplyr::recode(federal_ridings$sgc_code,
                                                 `62` = "NU")
 
 # Save federal_ridings R data object into data/
-use_data(federal_ridings)
-
-
-
-
+use_data(federal_ridings, overwrite = T)
 
 
 # Census divisions 2016 -------------------------------
@@ -194,7 +191,55 @@ census_divisions_2016 <- dplyr::left_join(census_divisions_2016, census_division
 
 
 names(census_divisions_2016) <- c("long", "lat", "order", "hole", "piece", "id", "group", "census_division_name",
-                                  "census_division_type", "province_sgc_code", "province")
+                                  "census_division_type", "pr_sgc_code", "province")
+
+# Remove English and French province variable
+census_divisions_2016 <- census_divisions_2016 %>% dplyr::select(-province)
+
+census_divisions_2016$pr_alpha <- dplyr::recode(census_divisions_2016$pr_sgc_code,
+                                                `10` = "NL",
+                                                `11` = "PE",
+                                                `12` = "NS",
+                                                `13` = "NB",
+                                                `24` = "QC",
+                                                `35` = "ON",
+                                                `46` = "MB",
+                                                `47` = "SK",
+                                                `48` = "AB",
+                                                `59` = "BC",
+                                                `60` = "YT",
+                                                `61` = "NT",
+                                                `62` = "NU")
+
+census_divisions_2016$pr_english <- dplyr::recode(census_divisions_2016$pr_sgc_code,
+                                                  `10` = "Newfoundland and Labrador",
+                                                  `11` = "Prince Edward Island",
+                                                  `12` = "Nova Scotia",
+                                                  `13` = "New Brunswick",
+                                                  `24` = "Quebec",
+                                                  `35` = "Ontario",
+                                                  `46` = "Manitoba",
+                                                  `47` = "Saskatchewan",
+                                                  `48` = "Alberta",
+                                                  `59` = "British Columbia",
+                                                  `60` = "Yukon",
+                                                  `61` = "Northwest Territories",
+                                                  `62` = "Nunavut")
+
+census_divisions_2016$pr_french <- dplyr::recode(census_divisions_2016$pr_sgc_code,
+                                           `10` = "Terre-Neuve-et-Labrador",
+                                           `11` = "Île-du-Prince-Édouard",
+                                           `12` = "Nouvelle-Écosse",
+                                           `13` = "Nouveau-Brunswick",
+                                           `24` = "Québec",
+                                           `35` = "Ontario",
+                                           `46` = "Manitoba",
+                                           `47` = "Saskatchewan",
+                                           `48` = "Alberta",
+                                           `59` = "Colombie-Britannique",
+                                           `60` = "Yukon",
+                                           `61` = "Territoires du Nord-Ouest",
+                                           `62` = "Nunavut")
 
 # Save census_divisions_2016 R data object into data/
 use_data(census_divisions_2016)

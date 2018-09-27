@@ -26,4 +26,6 @@ names(census_pop2016) <- c("census_division_code",
                            "land_area_2016",
                            "population_2011")
 
+census_pop2016 %>% filter(population_2016 > 10000000)
+
 use_data(census_pop2016)
