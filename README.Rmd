@@ -18,54 +18,71 @@ knitr::opts_chunk$set(
 
 `mapcan` is an R package that provides convenient tools for plotting a variety of Canadian maps with the `ggplot2` package. 
 
-```{r echo = FALSE}
+# Using mapcan
+
+`mapcan` data are best utilized with `ggplot2`
+
+```{r echo = TRUE}
+library(mapcan)
 library(ggplot2)
 library(tidyverse)
 library(paletteer)
-library(scales)
-library(gridExtra)
-load(file = "data/provinces_territories_carto_df.rda")
-load(file = "data/provinces_noterr_carto_df.rda")
-load(file = "data/federal_ridings.rda")
-load(file = "data/riding_info.rda")
-load(file = "data/federal_riding_bins.rda")
-load(file = "data/census_divisions_2016_carto_df.rda")
-load(file = "data/census_divisions_2016_noterr_carto_df.rda")
 ```
 
 
 ## Tile grid map of Canadian federal electoral ridings
 
 ```{r echo = FALSE}
-federal_riding_bins$y <- federal_riding_bins$y*2
-federal_riding_bins$x <- federal_riding_bins$x*2
+federal_riding_bins <- mapcan::federal_riding_bins
 
-federal_riding_bins$province <- factor(federal_riding_bins$province, levels = c("BC", "AB", "SK", "MB", "ON", "QC", "NL", "NB", "PE", "NS"))
+federal_riding_bins$pr_alpha <- factor(federal_riding_bins$pr_alpha, levels = c("BC", "AB", "SK", "MB", "ON", "QC", "NL", "NB", "PE", "NS"))
 
-ggplot(federal_riding_bins, aes(x = x, y = y, fill = province)) +
+ggplot(federal_riding_bins[federal_riding_bins$representation_order == 2013, ], aes(x = y, y = x, fill = pr_alpha)) +
   geom_raster() +
-  geom_tile(colour = "white", size = 1.5, fill = NA)+
+  geom_tile(colour = "white", size = 1.5, fill = NA) +
   paletteer::scale_fill_paletteer_d("ggthemes", "tableau_greenorange12") +
   coord_fixed() +
   scale_y_reverse() +
-  theme_light() +
+  theme_light()  +
   theme(panel.grid = element_blank(),
         panel.border = element_blank(),
         axis.text = element_blank(), 
         axis.title = element_blank(),
-        legend.position = "bottom",
-        ) +
-  guides(fill = guide_legend(keywidth = 0.8, keyheight = 0.8,
-                             nrow = 1, title = NULL))
+        legend.position = "bottom") +
+  guides(fill = guide_legend(keywidth = 0.6, keyheight = 0.3,
+                             nrow = 1, title = NULL)) +
+  ggtitle("Canadian federal electoral ridings (2013 representation order)")
 ```
 
-```{r include = FALSE}
+
+```{r }
+ggplot(federal_riding_bins[federal_riding_bins$representation_order == 2003, ], aes(x = y, y = x, fill = pr_alpha)) +
+  geom_raster() +
+  geom_tile(colour = "white", size = 1.5, fill = NA) +
+  paletteer::scale_fill_paletteer_d("ggthemes", "tableau_greenorange12") +
+  coord_fixed() +
+  scale_y_reverse() +
+  theme_light()  +
+  theme(panel.grid = element_blank(),
+        panel.border = element_blank(),
+        axis.text = element_blank(), 
+        axis.title = element_blank(),
+        legend.position = "bottom") +
+  guides(fill = guide_legend(keywidth = 0.6, keyheight = 0.3,
+                             nrow = 1, title = NULL)) +
+  ggtitle("Canadian federal electoral ridings (2003 representation order)")
+```
+
+```{r include = FALSE, echo = FALSE}
 paletteer::palettes_d_names
 paletteer::paletteer_d("ggsci", "category10_d3")
 ```
+
 ## 2015 Canadian federal election results
 
 ```{r echo = FALSE}
+federal_ridings <- mapcan::federal_ridings
+
 federal_ridings <- left_join(federal_ridings, riding_info, by = c("riding_code" = "riding_code"))
 
 ggplot(federal_ridings, aes(long, lat, group = group, fill = party)) +
@@ -85,6 +102,8 @@ ggplot(federal_ridings, aes(long, lat, group = group, fill = party)) +
 ## Provincial/territorial cartogram
 
 ```{r echo = FALSE}
+provinces_territories_carto_df <- mapcan::provinces_territories_carto_df
+
 ggplot(provinces_territories_carto_df, aes(long, lat, group = group, fill = population)) +
   geom_polygon() +
   theme_light() +
@@ -96,6 +115,8 @@ ggplot(provinces_territories_carto_df, aes(long, lat, group = group, fill = popu
         legend.title = element_blank()) +
   coord_fixed() +
   ggtitle("Provincial/territorial cartogram\n(distorted by population)")
+
+provinces_noterr_carto_df <- mapcan::provinces_noterr_carto_df
 
 ggplot(provinces_noterr_carto_df, aes(long, lat, group = group, fill = population)) +
   geom_polygon() +
@@ -112,6 +133,8 @@ ggplot(provinces_noterr_carto_df, aes(long, lat, group = group, fill = populatio
 ```
 ## Census division cartograms
 ```{r echo = FALSE}
+census_divisions_2016_carto_df <- mapcan::census_divisions_2016_carto_df
+
 ggplot(census_divisions_2016_carto_df, aes(long, lat, group = group, fill = population_2016)) +
   geom_polygon() +
   theme_light() +
@@ -126,6 +149,8 @@ ggplot(census_divisions_2016_carto_df, aes(long, lat, group = group, fill = popu
         legend.title = element_blank()) +
   coord_fixed() +
   ggtitle("2016 census divisions cartogram (distorted by population)") 
+
+census_divisions_2016_noterr_carto_df <- mapcan::census_divisions_2016_noterr_carto_df
 
 ggplot(census_divisions_2016_noterr_carto_df, aes(long, lat, group = group, fill = population_2016)) +
   geom_polygon() +
