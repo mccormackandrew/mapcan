@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 `mapcan` data are best utilized with `ggplot2`
 
-```{r echo = TRUE}
+```{r echo = TRUE, warning = FALSE, message = FALSE}
 library(mapcan)
 library(ggplot2)
 library(tidyverse)
@@ -54,6 +54,10 @@ ggplot(federal_riding_bins[federal_riding_bins$representation_order == 2013, ], 
   ggtitle("Canadian federal electoral ridings (2013 representation order)")
 ```
 
+```{r}
+sum(table(federal_election_results_2015$pr_alpha))
+table(federal_riding_bins$pr_alpha)
+```
 
 ```{r }
 ggplot(federal_riding_bins[federal_riding_bins$representation_order == 2003, ], aes(x = y, y = x, fill = pr_alpha)) +

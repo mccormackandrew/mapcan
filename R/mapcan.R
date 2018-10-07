@@ -19,7 +19,9 @@
 mapcan <- function(boundaries,
                    type,
                    province = all,
-                   territories = TRUE) {
+                   territories = TRUE
+                   #year = election year (only relevant for ridings data)
+                     ) {
 
   # Capture expression (with substitute) and convert to a character string (deparse)
   type_chr <- deparse(substitute(type))
@@ -76,3 +78,4 @@ mapcan <- function(boundaries,
   }
   return(mapcan_data)
 }
+?mapcan

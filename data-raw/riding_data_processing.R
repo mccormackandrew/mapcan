@@ -27,12 +27,12 @@ election1997_2000 <- election1997_2000 %>%
                             election1997_2000$elected_first_name, " ",
                             election1997_2000$elected_middle_name)) %>%
   mutate(candidate = trimws(candidate),
-         district_number  = ed_code) %>%
+         riding_code  = ed_code) %>%
   mutate(population = population_cnt,
          voter_turnout = voter_participation_percentage,
          party = elected_party_english_name,
          province = province_name_english) %>%
-  dplyr::select(province, ed_english_name, ed_french_name, district_number,
+  dplyr::select(province, ed_english_name, ed_french_name, riding_code,
                 population, voter_turnout, candidate, election_year, party)
 
 
@@ -70,7 +70,7 @@ election_file_names <- paste0("data-raw/election_results/",
                               list.files(path = "data-raw/election_results/", pattern = "*.csv"))
 
 ## Read in all the files to a list
-election_files <- lapply(election_file_names, function(x) read.csv(x, fileEncoding="latin1"))
+election_files <- lapply(election_file_names, function(x) read.csv(x, fileEncoding="latin1", stringsAsFactors = F))
 
 ## Create a vector to give unique election_year column to each dataframe in the list
 election_years <- c(2004, 2006, 2008, 2011, 2015)
@@ -83,36 +83,36 @@ for(i in 1:length(election_files)) {
 ## Naming is inconsistent, but variables all mean the same thing
 ## 2004 and 2006 do not have election district number, just names
 
-names(election_files[[1]]) <- c("province", "district", "population", "electors",
+names(election_files[[1]]) <- c("province", "riding", "population", "electors",
                                 "total_polls", "valid_ballots", "valid_ballots_pct", "rejected_ballots",
                                 "rejected_ballots_pct", "total_ballots", "voter_turnout", "candidate", "election_year")
 
-# Create empty "district_number" variable to enable merging with 08/11/15 data frames (which do have district_number)
-election_files[[1]]$district_number <- rep(NA, nrow(election_files[[1]]))
+# Create empty "riding_code" variable to enable merging with 08/11/15 data frames (which do have riding_code)
+election_files[[1]]$riding_code <- rep(NA, nrow(election_files[[1]]))
 
-names(election_files[[2]]) <- c("province", "district", "population", "electors",
+names(election_files[[2]]) <- c("province", "riding", "population", "electors",
                                 "total_polls", "valid_ballots", "valid_ballots_pct", "rejected_ballots",
                                 "rejected_ballots_pct", "total_ballots", "voter_turnout", "candidate", "election_year")
 
-# Create empty "district_number" variable to enable merging with 08/11/15 data frames (which do have district_number)
-election_files[[2]]$district_number <- rep(NA, nrow(election_files[[2]]))
+# Create empty "riding_code" variable to enable merging with 08/11/15 data frames (which do have riding_code)
+election_files[[2]]$riding_code <- rep(NA, nrow(election_files[[2]]))
 
-names(election_files[[3]]) <- c("province", "district", "district_number", "population", "electors",
+names(election_files[[3]]) <- c("province", "riding", "riding_code", "population", "electors",
                                 "total_polls", "valid_ballots", "valid_ballots_pct", "rejected_ballots",
                                 "rejected_ballots_pct", "total_ballots", "voter_turnout", "candidate", "election_year")
 
-names(election_files[[4]]) <- c("province", "district", "district_number", "population", "electors",
+names(election_files[[4]]) <- c("province", "riding", "riding_code", "population", "electors",
                                 "total_polls", "valid_ballots", "valid_ballots_pct", "rejected_ballots",
                                 "rejected_ballots_pct", "total_ballots", "voter_turnout", "candidate", "election_year")
 
-names(election_files[[5]]) <- c("province", "district", "district_number", "population", "electors",
+names(election_files[[5]]) <- c("province", "riding", "riding_code", "population", "electors",
                                 "total_polls", "valid_ballots", "valid_ballots_pct", "rejected_ballots",
                                 "rejected_ballots_pct", "total_ballots", "voter_turnout", "candidate", "election_year")
 
 ## Select and order variables of interest
 for(i in 1:length(election_files)) {
   election_files[[i]] <- election_files[[i]] %>%
-    dplyr::select(province, district, district_number, population, voter_turnout, candidate, election_year)
+    dplyr::select(province, riding, riding_code, population, voter_turnout, candidate, election_year)
 }
 
 ## Merge the dataframes together!
@@ -147,7 +147,7 @@ elections_2004_2015$candidate <- gsub("Conservative/conservateur|Conservative/Co
 elections_2004_2015$candidate <- trimws(elections_2004_2015$candidate)
 
 elections_2004_2015 <- elections_2004_2015 %>%
-  separate(district, c("ed_english_name", "ed_french_name"), sep = "/")
+  separate(riding, c("ed_english_name", "ed_french_name"), sep = "/")
 
 for(i in 1:nrow(elections_2004_2015)) {
   if (is.na(elections_2004_2015$ed_french_name[i])) {
@@ -158,9 +158,91 @@ for(i in 1:nrow(elections_2004_2015)) {
 }
 
 
+
+elections_2004_2015$province[elections_2004_2015$province ==
+                               "Newfoundland and Labrador/Terre-Neuve-et-Labrador"] <- "Newfoundland and Labrador"
+elections_2004_2015$province[elections_2004_2015$province ==
+                               "Prince Edward Island/Île-du-Prince-Édouard"] <- "Prince Edward Island"
+elections_2004_2015$province[elections_2004_2015$province %in%
+                               c("Nova Scotia/Nouvelle-Écosse",
+                                 "Nova Scotia/Nouvelle-Ã\u0089cosse")] <- "Nova Scotia"
+elections_2004_2015$province[elections_2004_2015$province ==
+                               "New Brunswick/Nouveau-Brunswick"] <- "New Brunswick"
+elections_2004_2015$province[elections_2004_2015$province ==
+                               "British Columbia/Colombie-Britannique"] <- "British Columbia"
+elections_2004_2015$province[elections_2004_2015$province ==
+                               "Northwest Territories/Territoires du Nord-Ouest"] <- "Northwest Territories"
+elections_2004_2015$province[elections_2004_2015$province ==
+                               "Prince Edward Island/Ã\u008ele-du-Prince-Ã\u0089douard"] <- "Prince Edward Island"
+elections_2004_2015$province[elections_2004_2015$province %in%
+                               c("Quebec/Québec", "Quebec/QuÃ©bec")] <- "Quebec"
+
 # Merging all the elections together -----------------------------------
 
 federal_election_results <- rbind(election1997_2000, elections_2004_2015)
 
-use_data(federal_election_results, overwrite = TRUE)
+
+
+# Add additional province identifiers -----------------------------------
+
+
+federal_election_results$province[federal_election_results$province == "Newfoundland"] <- "Newfoundland and Labrador"
+federal_election_results$province[federal_election_results$province == "Yukon Territory"] <- "Yukon"
+
+
+federal_election_results$pr_alpha <- dplyr::recode(federal_election_results$province,
+                                                   `Newfoundland and Labrador` = "NL",
+                                                   `Prince Edward Island` = "PE",
+                                                   `Nova Scotia` = "NS",
+                                                   `New Brunswick` = "NB",
+                                                   `Quebec` = "QC",
+                                                   `Ontario` = "ON",
+                                                   `Manitoba` = "MB",
+                                                   `Saskatchewan` = "SK",
+                                                   `Alberta` = "AB",
+                                                   `British Columbia` = "BC",
+                                                   `Yukon` = "YK",
+                                                   `Northwest Territories` = "NT",
+                                                   `Nunavut` = "NU")
+
+federal_election_results$pr_french <- dplyr::recode(federal_election_results$pr_alpha,
+                                               `NL` = "Terre-Neuve-et-Labrador",
+                                               `PE` = "Île-du-Prince-Édouard",
+                                               `NS` = "Nouvelle-Écosse",
+                                               `NB` = "Nouveau-Brunswick",
+                                               `QC` = "Québec",
+                                               `ON` = "Ontario",
+                                               `MB` = "Manitoba",
+                                               `SK` = "Saskatchewan",
+                                               `AB` = "Alberta",
+                                               `BC` = "Colombie-Britannique",
+                                               `YK` = "Yukon",
+                                               `NT` = "Territoires du Nord-Ouest",
+                                               `NU` = "Nunavut")
+
+federal_election_results$pr_sgc_code <- dplyr::recode(federal_election_results$pr_alpha,
+                                                 `NL` = 10L,
+                                                 `PE` = 11L,
+                                                 `NS` = 12L,
+                                                 `NB` = 13L,
+                                                 `QC` = 24L,
+                                                 `ON` = 35L,
+                                                 `MB` = 46L,
+                                                 `SK` = 47L,
+                                                 `AB` = 48L,
+                                                 `BC` = 59L,
+                                                 `YK` = 60L,
+                                                 `NT` = 61L,
+                                                 `NU` = 62L)
+
+federal_election_results <- federal_election_results %>%
+  mutate(pr_english = province) %>%
+  select(-province)
+
+
+# Make riding_code consistent (i.e. just numbers)
+federal_election_results$riding_code <- gsub("ED", "", federal_election_results$riding_code) %>%
+  gsub("-", "", .)
+
+use_data(federal_election_results, overwrite = T)
 

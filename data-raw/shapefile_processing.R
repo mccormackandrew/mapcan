@@ -60,7 +60,9 @@ provinces_territories$pr_alpha <- dplyr::recode(provinces_territories$pr_sgc_cod
        `62` = "NU")
 
 # Save R data object into data/
-use_data(provinces_territories, overwrite = T)
+use_data(provinces_territories)
+
+
 
 
 
@@ -155,8 +157,38 @@ federal_ridings$pr_alpha <- dplyr::recode(federal_ridings$sgc_code,
                                                 `61` = "NT",
                                                 `62` = "NU")
 
+
+
+
+# Add centroids (for labelling)
+
+federal_ridings_shp <- rgdal::readOGR("data-raw/shapefile_data/federal_ridings", "lfed000b16a_e")
+
+federal_ridings_shp <- sp::spTransform(federal_ridings_shp,
+                                   CRS("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"))
+
+## Determining centroids of each polygon for plotting labels
+fed_riding_centroid_data <- federal_ridings_shp %>%
+  coordinates() %>%
+  as.data.frame()
+
+# Merge with ridings ID
+fed_riding_labels <- data.frame(fed_riding_centroid_data, federal_ridings_shp@data$FEDUID)
+
+# Get rid of shapefile
+rm(federal_ridings_shp)
+
+names(fed_riding_labels) <- c("centroid_long", "centroid_lat", "riding_code")
+
+federal_ridings <- left_join(federal_ridings, fed_riding_labels)
+
+federal_ridings$centroid_long[duplicated(federal_ridings$centroid_long)] <- NA
+federal_ridings$centroid_lat[duplicated(federal_ridings$centroid_lat)] <- NA
+
 # Save federal_ridings R data object into data/
 use_data(federal_ridings, overwrite = T)
+
+
 
 
 # Census divisions 2016 -------------------------------
