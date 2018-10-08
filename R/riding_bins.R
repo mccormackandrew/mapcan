@@ -52,9 +52,10 @@ riding_binplot <- function (riding_data,
                       size = riding_border_size)
 
   if(continuous == T) {
-    gg <- gg + scale_fill_distiller(palette = palette)
+    #gg <- gg + scale_fill_distiller(palette = palette, direction = 1)
+    gg <- gg + scale_fill_viridis_c(value_col)
   } else if (continuous == F) {
-    gg <- gg + scale_fill_brewer(palette = palette)
+    gg <- gg + scale_fill_viridis_d(value_col)
     }
   gg <- gg + coord_equal()
   gg <- gg + labs(x = NULL, y = NULL)

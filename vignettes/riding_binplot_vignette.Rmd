@@ -28,17 +28,17 @@ The `riding_binplot()` function takes data at the federal riding level as its in
 
 ## Overview
 
-Geographically, Canada is a huge country. Yet, around 80% of its population is concentrated in urban areas. Because of this, the majority of federal electoral ridings are small and urban while a much smaller number of ridings in sparsely-populated regions account for the majority of Canada's landmass. Because of this, visualizing statistics at the riding level with standard cloropeth maps is not ideal. The `riding_binplot()` function of the `mapcan` package offers an alternative: the tile grid map. Tile grid maps are a way of visualizing geographic data when it is not neccessary to accurately represent geographic areas
+Geographically, Canada is a huge country. Yet, around 80% of its population is concentrated in urban areas. Because of this, the majority of federal electoral ridings are small and urban while a much smaller number of ridings in sparsely-populated regions account for the majority of Canada's landmass. Because of this, visualizing statistics at the riding level with standard cloropeth maps is not ideal. The `riding_binplot()` function of the `mapcan` package offers an alternative: the tile grid map. Inspired by the `statebins` package [@rudisstatebins], federal riging tile grid maps are a way of visualizing riding-level data when it is not neccessary to accurately represent the ridings geographically. 
 
-# Using `riding_binplot()`
+## Using `riding_binplot()`
 
-## Categorical variables
+### Categorical variables
 
-### Preparing the data
+#### Preparing the data
 
-Provide `riding_binplot()` with a data frame that includes a riding-level variable as well as numeric riding code variable. Specify the riding-level variable of interest in the `value_col` argument. Specify the numeric riding code variable in the `riding_col` argument. For instance, we may want to create a tile plot for the seat distribution of the 2015 federal election. 
+`riding_binplot()` requires a data frame that includes a riding-level variable as well as numeric riding code variable. Specify the riding-level variable of interest in the `value_col` argument. Specify the numeric riding code variable in the `riding_col` argument. For instance, we may want to create a tile plot for the seat distribution of the 2015 federal election. 
 
-Luckily, `mapcan` comes with federal election data (the `federal_election_results` data frame) that dates back to 1996 with variables for riding codes/names, provinces, population, voter turnout and the winning party for each riding. Using `dplyr`, let's extract the information we need for our tile grid plot:
+Luckily, `mapcan` comes with federal election data (the `federal_election_results` data frame) that dates back to 1996 with variables for riding codes/names, provinces, population, voter turnout and the winning party for each riding. Let's restrict `federal_election_results` to include only observations (ridings) from the 2015 election. Because we only need (1) a riding characteristic variable and (2) a riding code variable, we can select only these columns from the data (note that this is not required).
 
 ```{r}
 fed_2015 <- federal_election_results %>%
@@ -55,14 +55,15 @@ fed_2015 %>%
 
 Looking good.
 
-### Plotting the data 
+#### Plotting the data 
 
 Use `continuous = TRUE` for continuous variables and `continuous = FALSE` for categorical variables. `party` is a categorical variable, so we will specify `continuous = FALSE`:
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
 fed_2015_bins <- fed_2015 %>%
   riding_binplot(value = "party", 
-                 continuous = FALSE)
+                 continuous = FALSE) +
+  ggtitle("Tile grid map of 2015 federal election results")
 fed_2015_bins
 ```
 
@@ -92,22 +93,44 @@ fed_2015 %>%
                  arrange = TRUE) + 
   theme_mapcan() + 
   scale_fill_manual(name = "Party",
-                    values = c("mediumturquoise", "blue", "springgreen3", "red", "orange"))
+                    values = c("mediumturquoise", "blue", "springgreen3", "red", "orange")) +
+  ggtitle("Tile grid map of 2015 federal election results")
 ```
 
+### Continuous variables
 
+Let's make a riding tile plot with a continuous variable: voter turnout. This variable is included in the `federal_election_results` dataset, which is part of the `mapcan` package. Specify `continuous = TRUE` in riding_binplot so that ggplot uses a continuous fill scale. The default scale is `scale_fill_viridis_c()` from the `viridis` package. Though, as demonstrated above, this can be changed easily by overriding the default scale.
 
+Note that the data can be tidied up using `dplyr` and piped directly into `riding_binplot()`:
 
-## Continuous variables
-```{r eval = FALSE, fig.width = 7, fig.height=3, eval = FALSE}
-fed_2015_bins %>%
+```{r fig.width = 8, fig.height=4, warning = FALSE}
+federal_election_results %>%
   filter(election_year == 2015) %>%
   riding_binplot(value = "voter_turnout",
-                 continuous = TRUE, 
-                 arrange = TRUE)
-  theme_mapcan() +
-  theme(plot.margin=unit(c(0,0,0,0),"mm"))
+                 continuous = TRUE) +
+  ggtitle("Tile grid map of 2015 federal election voter turnout")
 ```
 
+Once again, because we care little about the axis grid and axis values, we can use the `theme_mapcan()` theme:
+
+```{r fig.width = 8, fig.height=4, warning = FALSE}
+federal_election_results %>%
+  filter(election_year == 2015) %>%
+  riding_binplot(value = "voter_turnout",
+                 continuous = TRUE) +
+  theme_mapcan() +
+  ggtitle("Tile grid map of 2015 federal election voter turnout")
+```
+
+Like with the election results that are plotted above, we may want to arrange the values of voter turnout within provinces. Fortunately, we can also use the `arrange = TRUE` argument when the riding-level variable is continuous. 
+```{r fig.width = 8, fig.height=4, warning = FALSE}
+federal_election_results %>%
+  filter(election_year == 2015) %>%
+  riding_binplot(value = "voter_turnout",
+                 continuous = TRUE,
+                 arrange = TRUE) +
+  theme_mapcan() +
+  ggtitle("Tile grid map of 2015 federal election voter turnout")
+```
 
 ## Reference
