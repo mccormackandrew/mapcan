@@ -1,4 +1,4 @@
-#' Canadian Maps Function
+#' Canadian maps function
 #'
 #' A function that returns a data frame with map data, for use in ggplot.
 #'

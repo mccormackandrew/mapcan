@@ -17,9 +17,11 @@
   \item{group}{Group}
   \item{census_division_name}{Census division name}
   \item{census_divison_type}{Census division type}
-  \item{province_sgc_code}{Province Standard Geographical Classification
+  \item{pr_alpha}{Province or territory 2-letter identifier}
+  \item{pr_sgc_code}{Province Standard Geographical Classification
                            (SGC) code.}
-  \item{province}{Province or territory name (English and French)}
+  \item{pr_english}{Province name (English)}
+  \item{pr_french}{Province name (French)}
 }}
 \source{
 \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm}

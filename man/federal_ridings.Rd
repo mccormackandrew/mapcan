@@ -11,16 +11,17 @@
   \item{order}{Order of layers}
   \item{hole}{Polygon hole (TRUE or FALSE)}
   \item{piece}{Piece}
-  \item{code}{Uniquely identifies a federal electoral district (composed of the
+  \item{riding_code}{Uniquely identifies a federal electoral district (composed of the
               2-digit province/territory unique identifier followed by the
               3-digit federal electoral district code).}
   \item{group}{Group}
-  \item{riding_name}{Federal electoral district name.}
   \item{riding_name_english}{Federal electoral district name in English.}
   \item{riding_name_french}{Federal electoral district name in French.}
+  \item{pr_english}{Province name (English)}
+  \item{pr_french}{Province name (French)}
+  \item{pr_alpha}{Province or territory 2-letter identifier}
   \item{province_sgc_code}{Province Standard Geographical Classification
                            (SGC) code}
-  \item{province}{Province or territory name (English and French)}
 }}
 \source{
 \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm}

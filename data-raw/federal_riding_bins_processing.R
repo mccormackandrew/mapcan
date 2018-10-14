@@ -92,5 +92,6 @@ representation_2013_ridings <- binsfun(representation_2013_ridings, "2013")
 federal_riding_bins$riding_code <- c(rep(NA, nrow(federal_riding_bins) - nrow(representation_2013_ridings)),
                                      representation_2013_ridings$value.2)
 
+
 use_data(federal_riding_bins)
 

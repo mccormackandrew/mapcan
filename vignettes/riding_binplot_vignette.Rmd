@@ -28,7 +28,7 @@ The `riding_binplot()` function takes data at the federal riding level as its in
 
 ## Overview
 
-Geographically, Canada is a huge country. Yet, around 80% of its population is concentrated in urban areas. Because of this, the majority of federal electoral ridings are small and urban while a much smaller number of ridings in sparsely-populated regions account for the majority of Canada's landmass. Because of this, visualizing statistics at the riding level with standard cloropeth maps is not ideal. The `riding_binplot()` function of the `mapcan` package offers an alternative: the tile grid map. Inspired by the `statebins` package [@rudisstatebins], federal riging tile grid maps are a way of visualizing riding-level data when it is not neccessary to accurately represent the ridings geographically. 
+Although Canada is a very large country, around 80% of its population is concentrated in urban areas. Because of this, the majority of federal electoral ridings are small and urban while a much smaller number of ridings in sparsely-populated regions account for the majority of Canada's landmass. Because of this, visualizing statistics at the riding level with standard cloropeth maps is not ideal. The `riding_binplot()` function of the `mapcan` package offers an alternative: the tile grid map. Inspired by the `statebins` package [@rudisstatebins], federal riding tile grid maps are a way of visualizing riding-level data when it is not neccessary to accurately represent the ridings geographically. 
 
 ## Using `riding_binplot()`
 
@@ -38,13 +38,15 @@ Geographically, Canada is a huge country. Yet, around 80% of its population is c
 
 `riding_binplot()` requires a data frame that includes a riding-level variable as well as numeric riding code variable. Specify the riding-level variable of interest in the `value_col` argument. Specify the numeric riding code variable in the `riding_col` argument. For instance, we may want to create a tile plot for the seat distribution of the 2015 federal election. 
 
-Luckily, `mapcan` comes with federal election data (the `federal_election_results` data frame) that dates back to 1996 with variables for riding codes/names, provinces, population, voter turnout and the winning party for each riding. Let's restrict `federal_election_results` to include only observations (ridings) from the 2015 election. Because we only need (1) a riding characteristic variable and (2) a riding code variable, we can select only these columns from the data (note that this is not required).
+Luckily, `mapcan` comes with built-in federal election data (the `federal_election_results` data frame) that dates back to 1996 with variables for riding codes/names, provinces, population, voter turnout and the winning party for each riding. Let's restrict `federal_election_results` to include only observations (ridings) from the 2015 election. Because we only need (1) a riding characteristic variable and (2) a riding code variable, we can select only these columns from the data.
 
 ```{r}
 fed_2015 <- federal_election_results %>%
   filter(election_year == 2015) %>%
   dplyr::select(riding_code, party)
 ```
+
+*Note: We remove all irrelevant variables from the data frame to illustrate more clearly how `riding_binplot` operates. They do not need to be removed in practice.*
 
 This new data frame has the two columns that we need: one to specify the riding code (`riding_code`) and another to specify a riding-level characteristic of interest (`party`). Let's look at a sample:
 
@@ -61,7 +63,7 @@ Use `continuous = TRUE` for continuous variables and `continuous = FALSE` for ca
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
 fed_2015_bins <- fed_2015 %>%
-  riding_binplot(value = "party", 
+  riding_binplot(value_col = party, 
                  continuous = FALSE) +
   ggtitle("Tile grid map of 2015 federal election results")
 fed_2015_bins
@@ -88,7 +90,7 @@ In this tile grid map, tiles are arranged by province yet, because seats are hig
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
 fed_2015 %>%
-  riding_binplot(value = "party", 
+  riding_binplot(value = party, 
                  continuous = FALSE,
                  arrange = TRUE) + 
   theme_mapcan() + 
@@ -96,6 +98,22 @@ fed_2015 %>%
                     values = c("mediumturquoise", "blue", "springgreen3", "red", "orange")) +
   ggtitle("Tile grid map of 2015 federal election results")
 ```
+
+Compared to a standard cloropeth map, the tile grid map gives us a better sense of how the 2015 federal election shaped up:
+
+```{r}
+fed_2015_cloropleth <- mapcan(boundaries = ridings, type = standard)
+
+left_join(fed_2015_cloropleth, fed_2015, by = "riding_code") %>%
+  ggplot(aes(long, lat, group = group, fill = party)) +
+  geom_polygon() + 
+  coord_fixed() + 
+  scale_fill_manual(name = "Party",
+                    values = c("mediumturquoise", "blue", "springgreen3", "red", "orange")) +
+  ggtitle("Tile grid map of 2015 federal election results") +
+  theme_mapcan()
+```
+
 
 ### Continuous variables
 
@@ -106,7 +124,7 @@ Note that the data can be tidied up using `dplyr` and piped directly into `ridin
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
 federal_election_results %>%
   filter(election_year == 2015) %>%
-  riding_binplot(value = "voter_turnout",
+  riding_binplot(value = voter_turnout,
                  continuous = TRUE) +
   ggtitle("Tile grid map of 2015 federal election voter turnout")
 ```
@@ -116,7 +134,7 @@ Once again, because we care little about the axis grid and axis values, we can u
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
 federal_election_results %>%
   filter(election_year == 2015) %>%
-  riding_binplot(value = "voter_turnout",
+  riding_binplot(value = voter_turnout,
                  continuous = TRUE) +
   theme_mapcan() +
   ggtitle("Tile grid map of 2015 federal election voter turnout")
@@ -126,7 +144,7 @@ Like with the election results that are plotted above, we may want to arrange th
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
 federal_election_results %>%
   filter(election_year == 2015) %>%
-  riding_binplot(value = "voter_turnout",
+  riding_binplot(value = voter_turnout,
                  continuous = TRUE,
                  arrange = TRUE) +
   theme_mapcan() +

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mapcan.R
 \name{mapcan}
 \alias{mapcan}
-\title{Canadian Maps Function}
+\title{Canadian maps function}
 \usage{
 mapcan(boundaries, type, province = all, territories = TRUE)
 }
