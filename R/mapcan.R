@@ -26,6 +26,7 @@ mapcan <- function(boundaries,
   # Capture expression (with substitute) and convert to a character string (deparse)
   type_chr <- deparse(substitute(type))
   boundaries_chr <- deparse(substitute(boundaries))
+  province_char <- deparse(substitute(province))
 
   ## PROVINCE
   if (boundaries_chr %in% c("province", "provinces", "provincial")) {
@@ -40,6 +41,9 @@ mapcan <- function(boundaries,
     }
     if (type_chr == "bins") {
       stop("Binned maps only for electoral district boundaries")
+    }
+    if (missing(type)) {
+      stop("type argument is empty, please specify type of map (options are standard, cartogram, and bins)")
     }
   }
 
@@ -76,6 +80,12 @@ mapcan <- function(boundaries,
       stop("Binned maps only for electoral district boundaries")
     }
   }
+
+  ## PLOTTING ONE (OR MORE THAN ONE, BUT NOT ALL) PROVINCE
+  if (province_char != "all") {
+    mapcan_data <- mapcan_data[mapcan_data$pr_alpha == province_char, ]
+  }
+
   return(mapcan_data)
 }
-?mapcan
+

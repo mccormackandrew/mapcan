@@ -1,0 +1,191 @@
+---
+title: "Using `mapcan` to create choropleth maps"
+author: "Andrew McCormack"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using `mapcan` to create choropleth maps}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mapcan)
+library(dplyr)
+library(ggplot2)
+```
+
+
+## Description
+
+The `mapcan()` function returns a data frame with geographic data that can be used in `ggplot2`.
+
+
+## Overview
+
+Visualizing spatial data in R often involves working with large, specialized shape files that require a fair amount of conversion and manipulation before they are ready for use in `ggplot`. `mapcan` has done most of the heavy lifting, providing flexible, `ggplot`-ready geographic data.       
+
+## Arguments
+
+At the most basic level, `mapcan()` requires two arguments: `boundaries` and `type`.
+
+* `boundaries`: set `boundaries = province` for geographic data at the province level, `boundaries = census` for data at the census division level, or `boundaries = ridings` for geographic data at the federal riding level.
+
+* `type`: to produce geographic data for a standard choropleth map, set `type = standard`. For population cartogram data (for maps that alter the geography based on the population size at the province or census division level), set `type = cartogram`. For tile grid maps data at the federal riding level, set `type = bins`. Note: while `type = cartogram` will provide *data* (i.e. coordinates) for use in tile grid maps, `mapcan::riding_binplot()` is a convenient function for creating actual tile grid *maps* `ggplot`. 
+
+By default, `mapcan()` will provide geographic data for the entire country. You may wish to either exclude the territories from your map or create a map of only one province:
+
+* `province`: to produce geographic data for only one province (or territory), provide the `province` argument with a provincial alpha code (options are `NL`, `PE`, `NS`, `NB`, `QC`, `ON`, `MB`, `SK`, `AB`, `BC`, `YT`, `NT`, and `NU`). For example, setting `province = BC` will return geographic data only for British Columbia. 
+
+* `territories`: set `territories = FALSE` to exclude the territorities.
+
+## Examples
+
+### Creating a choropleth map with provincial boundaries
+
+```{r}
+mapcan(boundaries = province,
+       type = standard) %>%
+  head()
+```
+
+`mapcan()` gives us a data frame with necessary components (longitude, latitude, order, hole, piece, and group) for use with `geom_polygon()` in the `ggplot` package. It also provides four different variables to describe the province that make it easy to merge this data with provincial data of your choice.
+
+#### Basic ingredients for `ggplot`
+
+To create a plot with data from `mapcan()`, the following aesthetic mappings are required: `x = long` (longitude), `y = lat` (latitude), `group = group` (this tells `geom_polygon()` how to group observations---in this case, provinces). Let's initialize the plot:
+
+```{r}
+pr_map <- mapcan(boundaries = province,
+       type = standard) %>%
+  ggplot(aes(x = long, y = lat, group = group))
+pr_map
+```
+
+This doesn't tell us much. We need to add a `geom` to visualize the map.
+
+#### Using `geom_polygon` to plot the coordinates
+
+To visualize the geographic data with `ggplot`, use `geom_polygon()`. It is important to also specify `coord_fixed()`---this fixes the relationship between longitude (the x-axis) and latitude (the y-axis):
+
+```{r fig.width = 6, fig.height=5.5, warning = FALSE}
+pr_map <- pr_map +
+  geom_polygon() +
+  coord_fixed()
+pr_map
+```
+You will notice that the axis text has no substantive significance. You can remove it, along with the axis ticks and background grid using `theme_mapcan` function, a `ggplot` theme that is part of the `mapcan` package:
+
+```{r fig.width = 6, fig.height=5.5, warning = FALSE}
+pr_map +
+  theme_mapcan() +
+  ## Add a title
+  ggtitle("Map of Canada with Provincial/Territorial Boundaries")
+```
+
+Though beautiful, this map is not very informative (unless you are unfamiliar with the shape of Canada). Let's add some province-level data. 
+
+#### Incorporate province-level statistics 
+
+It is relatively straightforward to merge your own province-level statistics into the geographic data that `mapcan()` provides. To illustrate, we will work with the `province_pop_annual` data frame that is included in the `mapcan` package. This dataset provides annual provincial/territorial population estimates dating back to 1971. Let's use the most recent population data, from 2017: 
+
+```{r}
+pop_2017 <- mapcan::province_pop_annual %>%
+  filter(year == 2017)
+
+head(pop_2017)
+```
+
+The next step is to attach these numbers to every point on the polygons of the provinces. To do this, we first create the required geographic with `mapcan()`, then we use `inner_join()` from the `dplyr` package to merge in the `pop_2017` data:
+
+```{r, warning = FALSE}
+pr_geographic <- mapcan(boundaries = province,
+       type = standard)
+
+
+pr_geographic <- inner_join(pr_geographic, 
+           pop_2017, 
+           by = c("pr_english" = "province"))
+```
+
+To colour the provinces according to their population size, set the population variable as a `fill` aesthetic. Because population is a continuous variable (and because I don't like the default colours), I will use `scale_fill_viridis_c()` colour scale to colour the map. 
+
+```{r fig.width = 6, fig.height=5.5, warning = FALSE}
+pr_geographic %>%
+  ggplot(aes(x = long, y = lat, group = group, fill = population)) +
+  geom_polygon() +
+  coord_fixed() +
+  theme_mapcan() +
+  scale_fill_viridis_c(name = "Population") +
+  ggtitle("Canadian Population by Province")
+```
+### Creating a choropleth map with federal riding boundaries
+
+#### Generate geographic data with riding boundaries
+
+To create a map with federal riding boundaries, we specify `boundaries = ridings`. For the sake of illustration, let's also look at just one province: British Columbia.
+
+```{r}
+bc_ridings <- mapcan(boundaries = ridings,
+       type = standard,
+       province = BC)
+
+head(bc_ridings)
+```
+
+#### Plot geographic data with riding boundaries
+
+```{r fig.width = 5, fig.height=5.5, warning = FALSE}
+ggplot(bc_ridings, aes(x = long, y = lat, group = group)) +
+  geom_polygon() +
+  coord_fixed() +
+  theme_mapcan() +
+  ggtitle("British Columbia \nFederal Electoral Ridings")
+```
+
+#### Incorporate riding-level statistics
+
+Like with province-level statistics above, we can also merge our own riding-level statistics into the riding-level geographic data that `mapcan()` has produced. We will work with the `federal_election_results` data frame that is included in the `mapcan` package. This dataset provides federal election results for all elections dating back to 1997. We will use the results of 2015 federal election to colour the ridings in British Columbia.  
+
+*Note: At the moment, `mapcan()` only provides geographic data for the electoral boundaries (2013 Representation Order) of the 2015 federal election.*
+
+```{r}
+bc_results <- mapcan::federal_election_results %>%
+  # Restrict data to include just 2015 election results from BC
+  filter(election_year == 2015 & pr_alpha == "BC")
+
+head(bc_results)
+```
+
+Next, we merge the two data frames (i.e. the geographic data and the election results data):
+
+```{r}
+bc_ridings <- inner_join(bc_results, bc_ridings, by = "riding_code")
+```
+
+To colour the ridings according the winning party of the 2015 election, set the `party` variable as a `fill` aesthetic:
+
+```{r}
+bc_riding_map <- bc_ridings %>%
+  ggplot(aes(x = long, y = lat, group = group, fill = party)) +
+  geom_polygon() +
+  coord_fixed() +
+  theme_mapcan() +
+  ggtitle("British Columbia \n2015 Federal Electoral Results")
+```
+
+The colours are not ideal. We can easily provide our own custom colours that correspond to the colours associated with the different parties with `ggplot`'s `scale_fill_manual()`:
+
+```{r fig.width = 5, fig.height=5.5, warning = FALSE}
+bc_riding_map +
+  scale_fill_manual(name = "Winning party",
+                    values = c("blue", "springgreen3", "red", "Orange")) 
+
+```
+
+
+

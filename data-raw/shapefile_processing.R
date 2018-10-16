@@ -142,7 +142,7 @@ federal_ridings$pr_french <- dplyr::recode(federal_ridings$pr_sgc_code,
 
 
 # Create pr_alpha variable
-federal_ridings$pr_alpha <- dplyr::recode(federal_ridings$sgc_code,
+federal_ridings$pr_alpha <- dplyr::recode(federal_ridings$pr_sgc_code,
                                                 `10` = "NL",
                                                 `11` = "PE",
                                                 `12` = "NS",
@@ -156,8 +156,6 @@ federal_ridings$pr_alpha <- dplyr::recode(federal_ridings$sgc_code,
                                                 `60` = "YT",
                                                 `61` = "NT",
                                                 `62` = "NU")
-
-
 
 
 # Add centroids (for labelling)
@@ -186,7 +184,7 @@ federal_ridings$centroid_long[duplicated(federal_ridings$centroid_long)] <- NA
 federal_ridings$centroid_lat[duplicated(federal_ridings$centroid_lat)] <- NA
 
 # Save federal_ridings R data object into data/
-use_data(federal_ridings, overwrite = T)
+use_data(federal_ridings)
 
 
 
