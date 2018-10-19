@@ -24,7 +24,8 @@
                            (SGC) code}
 }}
 \source{
-\url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm}
+\url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm},
+(under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
 }
 \usage{
 federal_ridings

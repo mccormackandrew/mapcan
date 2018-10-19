@@ -1,4 +1,4 @@
-#' Canadian federal ridings tileplot function
+#' Canadian federal ridings tile plot function
 #'
 #' A function that returns a data frame with map data, for use in ggplot.
 #'
@@ -16,14 +16,20 @@
 #' \code{2015}. This will change the number of tiles to correspond to the number of ridings in the election of the specified year.
 #' Default is \code{2015}
 #' @param riding_border_size Change the size of tiles. Larger values make smaller tiles. Default is \code{1}.
-#'
+#' @param provincial logical. Specify as FALSE for provincial (not federal) ridings of a single province.
+#' If \code{provincial = TRUE}, specify a 2-letter provincial abbreviation for the province in the \code{province} argument.
+#' Default is \code{FALSE} (i.e. the default is to provide federal electoral boundaries).
+#' (Note: this argument is still in development, only Quebec provincial boundaries are available at the moment.)
+#' @param province An unquoted character expression specifying the 2-letter provincial abbreviation of the province
+#' for which provincial electoral boundaries are desired. (Note: this argument is still in development, only Quebec provincial
+#' boundaries are available at the moment.)
 #' @examples
 #' election_2015 <- federal_election_results[federal_election_results$election_year == 2015, ]
 #'
 #' riding_binplot(riding_data = election_2015, riding code = riding_code, value_col = party, continuous = TRUE, arrange = TRUE)
 #'
 #' @export
-riding_binplot <- function (riding_data,
+riding_binplot <- function(riding_data,
                          riding_col = riding_code,
                          value_col,
                          continuous = TRUE,
@@ -31,7 +37,9 @@ riding_binplot <- function (riding_data,
                          palette = "Greens",
                          riding_border_col = "white",
                          year = 2015,
-                         riding_border_size = 1)
+                         riding_border_size = 1,
+                         provincial = FALSE,
+                         province)
   {
 
   riding.col <- deparse(substitute(riding_col))
@@ -44,14 +52,25 @@ riding_binplot <- function (riding_data,
 
   riding.df <- riding.df[ , c("riding_code", "value.col")]
 
-  if(year == 2015) {
+  if(provincial == FALSE) {
+    if(year == 2015) {
       riding_coords <- federal_riding_bins[federal_riding_bins$representation_order == 2013, ]
-  } else if (year %in% c(2004, 2006, 2008, 2011)) {
-    riding_coords <- federal_riding_bins[federal_riding_bins$representation_order == 2003, ]
-  } else if (year %in% c(1997, 2000)) {
-    riding_coords <- federal_riding_bins[federal_riding_bins$representation_order == 1996, ]
-  } else {
-    stop("Not a valid election year.")
+      } else if (year %in% c(2004, 2006, 2008, 2011)) {
+        riding_coords <- federal_riding_bins[federal_riding_bins$representation_order == 2003, ]
+        } else if (year %in% c(1997, 2000)) {
+          riding_coords <- federal_riding_bins[federal_riding_bins$representation_order == 1996, ]
+          } else {
+            stop("Not a valid election year.")
+          }
+  }
+
+  if(provincial == TRUE) {
+    province_char <- deparse(substitute(province))
+    if(province_char == "QC") {
+      riding_coords <- quebec_riding_bins
+      } else {
+        stop("Province (2-letter code) not valid, or provincial election boundaries for this province not supported yet.")
+      }
   }
 
   # Merge riding coordinates and riding data together

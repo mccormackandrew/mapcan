@@ -4,7 +4,7 @@
 \name{census_divisions_2016}
 \alias{census_divisions_2016}
 \title{Census divisions (2016)}
-\format{A data.frame with 91430 rows and 11 variables:
+\format{A data.frame with 91430 rows and 13 variables:
 \describe{
   \item{long}{Longitude}
   \item{lat}{Latitude}
@@ -25,6 +25,7 @@
 }}
 \source{
 \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm}
+(under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
 }
 \usage{
 census_divisions_2016

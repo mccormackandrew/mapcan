@@ -137,6 +137,7 @@ federal_election_results %>%
                  continuous = TRUE) +
   theme_mapcan() +
   ggtitle("Tile grid map of 2015 federal election voter turnout")
+
 ```
 
 Like with the election results that are plotted above, we may want to arrange the values of voter turnout within provinces. Fortunately, we can also use the `arrange = TRUE` argument when the riding-level variable is continuous. 
@@ -149,5 +150,17 @@ federal_election_results %>%
   theme_mapcan() +
   ggtitle("Tile grid map of 2015 federal election voter turnout")
 ```
+
+```{r eval = FALSE}
+riding_binplot(quebec_provincial_results,
+               value_col = party,
+               riding_col = riding_code, 
+               continuous = FALSE, 
+               provincial = TRUE,
+               province = "QC") +
+  theme_mapcan()
+
+```
+
 
 ## Reference

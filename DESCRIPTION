@@ -1,17 +1,22 @@
 Package: mapcan
 Type: Package
-Title: Draw Geographical Maps of Canada.
+Title: Tools for plotting Canadian choropleth maps and choropleth alternatives.
 Version: 0.1.0
 Authors@R: c(
     person("Andrew", "McCormack", email = "mccormack.andy@gmail.com", role = c("aut", "cre")),
     person("Aaron", "Erlich", email = "aaron.erlich@mcgill.ca", role = c("aut")))
 Maintainer: Andrew McCormack <mccormack.andy@gmail.com>
-Description: Tools for plotting maps of Canada.
-License: What license is it under?
+Description: mapcan offers a variety of function that make it easy to plot standard choropleth, 
+    tile grid, and cartogram maps in ggplot.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.0
-Suggests: knitr,
+Imports: 
+    dplyr,
+    ggplot2
+Suggests: 
+    knitr,
     rmarkdown,
     dplyr,
     ggplot2

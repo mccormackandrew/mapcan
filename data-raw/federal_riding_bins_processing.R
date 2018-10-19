@@ -5,8 +5,6 @@ representation_1996_provinces <- readxl::read_excel("data-raw/canada_squares.xls
 representation_2003_provinces <- readxl::read_excel("data-raw/canada_squares.xls", sheet = "representation_2003_provinces")
 representation_2013_provinces <- readxl::read_excel("data-raw/canada_squares.xls", sheet = "representation_2013_provinces")
 
-
-
 binsfun <- function(data, year) {
   rows <- data
   for(i in 1:nrow(rows)) {

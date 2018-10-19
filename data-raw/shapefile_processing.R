@@ -275,3 +275,70 @@ census_divisions_2016$pr_french <- dplyr::recode(census_divisions_2016$pr_sgc_co
 use_data(census_divisions_2016)
 
 
+
+
+# Quebec provincial ridings 2018 -------------------------------
+
+# Read in shapefile
+quebec_prov_ridings2018 <- rgdal::readOGR("data-raw/shapefile_data/quebec_prov_ridings", "Circonscriptions_Çlectorales_2017_shapefile")
+
+# Shapefile is unnecessarily large for creating plots, make smaller
+quebec_prov_ridings2018 <- rmapshaper::ms_simplify(quebec_prov_ridings2018, keep = 0.05, keep_shapes = T)
+
+# Add projection
+quebec_prov_ridings2018 <- sp::spTransform(quebec_prov_ridings2018,
+                                         CRS("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"))
+
+# Use zero-width buffer to clean up topology problems
+quebec_prov_ridings2018 <- rgeos::gBuffer(quebec_prov_ridings2018, byid=TRUE, width=0)
+
+# Save spdf
+quebec_prov_ridings2018_spdf <- quebec_prov_ridings2018
+
+use_data(quebec_prov_ridings2018_spdf, overwrite = TRUE)
+
+# Save data to merge
+quebec_prov_ridings2018_data <- quebec_prov_ridings2018@data %>%
+  mutate(CO_CEP = as.character(CO_CEP))
+
+
+# Fortify into dataset that can be used in ggplot
+quebec_prov_ridings2018 <- ggplot2::fortify(quebec_prov_ridings2018,
+                                          region = "CO_CEP")
+
+# Merge other data back in
+quebec_prov_ridings2018 <- dplyr::left_join(quebec_prov_ridings2018, quebec_prov_ridings2018_data, by = c("id" = "CO_CEP"))
+
+names(quebec_prov_ridings2018) <- c("long", "lat", "order", "hole", "piece", "riding_code", "group", "riding_name",
+                                  "RIDING_NAME")
+
+#use_data(quebec_prov_ridings2018, overwrite = TRUE)
+
+# Add centroids (for labelling)
+
+quebec_prov_ridings2018_shp <- rgdal::readOGR("data-raw/shapefile_data/quebec_prov_ridings", "Circonscriptions_Çlectorales_2017_shapefile")
+
+quebec_prov_ridings2018_shp <- sp::spTransform(quebec_prov_ridings2018_shp,
+                                       CRS("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"))
+
+## Determining centroids of each polygon for plotting labels
+quebec_prov_ridings2018_centroids <- quebec_prov_ridings2018_shp %>%
+  coordinates() %>%
+  as.data.frame()
+
+# Merge with ridings ID
+quebec_riding_labels <- data.frame(quebec_prov_ridings2018_centroids, quebec_prov_ridings2018_shp@data$NM_CEP)
+
+# Get rid of shapefile
+rm(quebec_prov_ridings2018_shp)
+
+names(quebec_riding_labels) <- c("centroid_long", "centroid_lat", "riding_name")
+
+quebec_prov_ridings2018 <- left_join(quebec_prov_ridings2018, quebec_riding_labels)
+
+quebec_prov_ridings2018$centroid_long[duplicated(quebec_prov_ridings2018$centroid_long)] <- NA
+quebec_prov_ridings2018$centroid_lat[duplicated(quebec_prov_ridings2018$centroid_lat)] <- NA
+
+# Save federal_ridings R data object into data/
+use_data(quebec_prov_ridings2018)
+
