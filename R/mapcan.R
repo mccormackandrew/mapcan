@@ -24,9 +24,24 @@ mapcan <- function(boundaries,
                      ) {
 
   # Capture expression (with substitute) and convert to a character string (deparse)
-  type_chr <- deparse(substitute(type))
-  boundaries_chr <- deparse(substitute(boundaries))
-  province_char <- deparse(substitute(province))
+
+  #if (is.character(type)) {
+  #  type_chr <- type
+  #} else {
+    type_chr <- deparse(substitute(type))
+  #}
+
+  #if (is.character(province)) {
+  #  province_chr <- province
+  #} else {
+    province_chr <- deparse(substitute(province))
+  #}
+
+  #if (is.character(boundaries)) {
+  #  boundaries_chr <- boundaries
+  #} else {
+    boundaries_chr <- deparse(substitute(boundaries))
+  #}
 
   ## PROVINCE
   if (boundaries_chr %in% c("province", "provinces", "provincial")) {
@@ -34,10 +49,10 @@ mapcan <- function(boundaries,
       mapcan_data <- mapcan::provinces_territories
     }
     if (type_chr == "cartogram" & territories == TRUE) {
-      mapcan_data <- mapcan::provinces_territories_carto_df
+      mapcan_data <- mapcan::provinces_territories_carto
     }
     if (type_chr == "cartogram" & territories == FALSE) {
-      mapcan_data <- mapcan::census_divisions_2016_noterr_carto_df
+      mapcan_data <- mapcan::census_divisions_2016_noterr_carto
     }
     if (type_chr == "bins") {
       stop("Binned maps only for electoral district boundaries")
@@ -86,8 +101,9 @@ mapcan <- function(boundaries,
 
   ## PLOTTING ONE (OR MORE THAN ONE, BUT NOT ALL) PROVINCE
   if (province_char != "all") {
-    mapcan_data <- mapcan_data[mapcan_data$pr_alpha == province_char, ]
+    mapcan_data <- mapcan_data[mapcan_data$pr_alpha == province_chr, ]
   }
 
   return(mapcan_data)
 }
+mapcan::provinces_territories_carto
