@@ -25,23 +25,23 @@ mapcan <- function(boundaries,
 
   # Capture expression (with substitute) and convert to a character string (deparse)
 
-  #if (is.character(type)) {
-  #  type_chr <- type
-  #} else {
+  if (is.symbol(substitute(type))) {
     type_chr <- deparse(substitute(type))
-  #}
+  } else {
+    type_chr <- type
+  }
 
-  #if (is.character(province)) {
-  #  province_chr <- province
-  #} else {
+  if (is.symbol(substitute(province))) {
     province_chr <- deparse(substitute(province))
-  #}
+  } else {
+    province_chr <- province
+  }
 
-  #if (is.character(boundaries)) {
-  #  boundaries_chr <- boundaries
-  #} else {
+  if (is.symbol(substitute(boundaries))) {
     boundaries_chr <- deparse(substitute(boundaries))
-  #}
+  } else {
+    boundaries_chr <- boundaries
+  }
 
   ## PROVINCE
   if (boundaries_chr %in% c("province", "provinces", "provincial")) {
@@ -100,10 +100,9 @@ mapcan <- function(boundaries,
   }
 
   ## PLOTTING ONE (OR MORE THAN ONE, BUT NOT ALL) PROVINCE
-  if (province_char != "all") {
+  if (province_chr != "all") {
     mapcan_data <- mapcan_data[mapcan_data$pr_alpha == province_chr, ]
   }
 
   return(mapcan_data)
 }
-mapcan::provinces_territories_carto
