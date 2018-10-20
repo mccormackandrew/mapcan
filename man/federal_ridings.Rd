@@ -4,7 +4,7 @@
 \name{federal_ridings}
 \alias{federal_ridings}
 \title{Federal ridings}
-\format{A data.frame with 209933 rows and 12 variables:
+\format{A data.frame with 46830 rows and 15 variables:
 \describe{
   \item{long}{Longitude}
   \item{lat}{Latitude}
@@ -17,11 +17,11 @@
   \item{group}{Group}
   \item{riding_name_english}{Federal electoral district name in English.}
   \item{riding_name_french}{Federal electoral district name in French.}
+  \item{province_sgc_code}{Province Standard Geographical Classification
+                           (SGC) code}
   \item{pr_english}{Province name (English)}
   \item{pr_french}{Province name (French)}
   \item{pr_alpha}{Province or territory 2-letter identifier}
-  \item{province_sgc_code}{Province Standard Geographical Classification
-                           (SGC) code}
 }}
 \source{
 \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm},

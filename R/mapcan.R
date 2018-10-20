@@ -33,10 +33,10 @@ mapcan <- function(boundaries,
     if (type_chr == "standard") {
       mapcan_data <- mapcan::provinces_territories
     }
-    if (type_chr == "carto" & territories == TRUE) {
+    if (type_chr == "cartogram" & territories == TRUE) {
       mapcan_data <- mapcan::provinces_territories_carto_df
     }
-    if (type_chr == "carto" & territories == FALSE) {
+    if (type_chr == "cartogram" & territories == FALSE) {
       mapcan_data <- mapcan::census_divisions_2016_noterr_carto_df
     }
     if (type_chr == "bins") {
@@ -56,7 +56,7 @@ mapcan <- function(boundaries,
       mapcan_data <- mapcan::federal_ridings
       mapcan_data <- mapcan_data[!(mapcan_data$pr_alpha %in% c("YT", "NT", "NU")) , ]
     }
-    if (type_chr == "carto" & territories == TRUE) {
+    if (type_chr == "cartogram" & territories == TRUE) {
       stop("Cartograms only for province and census divisions.")
     }
     if (type_chr == "bins") {
@@ -73,8 +73,11 @@ mapcan <- function(boundaries,
       mapcan_data <- mapcan::census_divisions_2016
       mapcan_data <- mapcan_data[!(mapcan_data$pr_alpha %in% c("YT", "NT", "NU")) , ]
     }
-    if (type_chr == "carto" & territories == TRUE) {
-      stop("Cartograms only for province and census divisions.")
+    if (type_chr == "cartogram") {
+      mapcan_data <- mapcan::census_divisions_2016_carto
+    }
+    if (type_chr == "cartogram" & territories == FALSE) {
+      mapcan_data <- mapcan::census_divisions_2016_noterr_carto
     }
     if (type_chr == "bins") {
       stop("Binned maps only for electoral district boundaries")
@@ -88,4 +91,3 @@ mapcan <- function(boundaries,
 
   return(mapcan_data)
 }
-

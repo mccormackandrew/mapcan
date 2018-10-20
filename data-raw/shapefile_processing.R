@@ -184,7 +184,7 @@ federal_ridings$centroid_long[duplicated(federal_ridings$centroid_long)] <- NA
 federal_ridings$centroid_lat[duplicated(federal_ridings$centroid_lat)] <- NA
 
 # Save federal_ridings R data object into data/
-use_data(federal_ridings)
+use_data(federal_ridings, overwrite = T)
 
 
 
@@ -220,7 +220,7 @@ census_divisions_2016 <- ggplot2::fortify(census_divisions_2016,
 census_divisions_2016 <- dplyr::left_join(census_divisions_2016, census_divisions_2016_data, by = c("id" = "CDUID"))
 
 
-names(census_divisions_2016) <- c("long", "lat", "order", "hole", "piece", "id", "group", "census_division_name",
+names(census_divisions_2016) <- c("long", "lat", "order", "hole", "piece", "census_code", "group", "census_division_name",
                                   "census_division_type", "pr_sgc_code", "province")
 
 # Remove English and French province variable
@@ -270,6 +270,7 @@ census_divisions_2016$pr_french <- dplyr::recode(census_divisions_2016$pr_sgc_co
                                            `60` = "Yukon",
                                            `61` = "Territoires du Nord-Ouest",
                                            `62` = "Nunavut")
+
 
 # Save census_divisions_2016 R data object into data/
 use_data(census_divisions_2016)

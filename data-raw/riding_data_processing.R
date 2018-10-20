@@ -20,8 +20,8 @@ election1997_2000 <- read.delim("data-raw/election_results/1997_2000_election_re
 election1997_2000 <- election1997_2000 %>%
   mutate(election_year = case_when(event_english_name == "Thirty-sixth General Election 1997" ~ 1997,
                                    event_english_name == "Thirty-seventh general election 2000" ~ 2000)) %>%
-  select(-event_english_name, -event_french_name)
-
+  dplyr::select(-event_english_name, -event_french_name)
+election1997_2000$ed_english_name
 election1997_2000 <- election1997_2000 %>%
   mutate(candidate = paste0(election1997_2000$elected_last_name, ", ",
                             election1997_2000$elected_first_name, " ",
@@ -31,8 +31,10 @@ election1997_2000 <- election1997_2000 %>%
   mutate(population = population_cnt,
          voter_turnout = voter_participation_percentage,
          party = elected_party_english_name,
-         province = province_name_english) %>%
-  dplyr::select(province, ed_english_name, ed_french_name, riding_code,
+         province = province_name_english,
+         riding_name_english = ed_english_name,
+         riding_name_french = ed_french_name) %>%
+  dplyr::select(province, riding_name_english, riding_name_french, riding_code,
                 population, voter_turnout, candidate, election_year, party)
 
 
@@ -147,13 +149,13 @@ elections_2004_2015$candidate <- gsub("Conservative/conservateur|Conservative/Co
 elections_2004_2015$candidate <- trimws(elections_2004_2015$candidate)
 
 elections_2004_2015 <- elections_2004_2015 %>%
-  separate(riding, c("ed_english_name", "ed_french_name"), sep = "/")
+  separate(riding, c("riding_name_english", "riding_name_french"), sep = "/")
 
 for(i in 1:nrow(elections_2004_2015)) {
-  if (is.na(elections_2004_2015$ed_french_name[i])) {
-    elections_2004_2015$ed_french_name[i] <- elections_2004_2015$ed_english_name[i]
+  if (is.na(elections_2004_2015$riding_name_french[i])) {
+    elections_2004_2015$riding_name_french[i] <- elections_2004_2015$riding_name_english[i]
   } else {
-    elections_2004_2015$ed_french_name[i] <- elections_2004_2015$ed_french_name[i]
+    elections_2004_2015$riding_name_french[i] <- elections_2004_2015$riding_name_english[i]
   }
 }
 
@@ -237,7 +239,7 @@ federal_election_results$pr_sgc_code <- dplyr::recode(federal_election_results$p
 
 federal_election_results <- federal_election_results %>%
   mutate(pr_english = province) %>%
-  select(-province)
+  dplyr::select(-province)
 
 
 # Make riding_code consistent (i.e. just numbers)

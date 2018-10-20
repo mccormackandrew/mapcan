@@ -4,19 +4,19 @@
 \name{provinces_territories}
 \alias{provinces_territories}
 \title{Provinces and territories standard geographic data}
-\format{A data.frame with 37111 rows and 12 variables:
+\format{A data.frame with 37111 rows and 10 variables:
 \describe{
   \item{long}{Longitude}
   \item{lat}{Latitude}
   \item{order}{Order of layers}
   \item{hole}{Polygon hole (TRUE or FALSE)}
   \item{piece}{Piece}
-  \item{pr}{Province or territory name (English and French).}
+  \item{province_sgc_code}{Province Standard Geographical Classification
+                           (SGC) code}
   \item{group}{Group}
   \item{pr_english}{Province or territory name (English).}
   \item{pr_french}{Province or territory name (French).}
-  \item{pr_abbr_english}{English abbreviation of the province or territory name.}
-  \item{pr_abbr_french}{French abbreviation of the province or territory name.}
+  \item{pr_alpha}{Province or territory 2-letter identifier}
 }}
 \source{
 \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm},
