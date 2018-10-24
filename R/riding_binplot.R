@@ -23,6 +23,7 @@
 #' @param province An unquoted character expression specifying the 2-letter provincial abbreviation of the province
 #' for which provincial electoral boundaries are desired. (Note: this argument is still in development, only Quebec provincial
 #' boundaries are available at the moment.)
+#' @param shape Unquoted chacter expression specifying shape of tiles. Options are square and hexagon, default is square.
 #' @examples
 #' election_2015 <- federal_election_results[federal_election_results$election_year == 2015, ]
 #'
@@ -34,13 +35,40 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
           year = 2015, riding_border_size = 1, provincial = FALSE,
           shape = "square", province)
 {
-  riding.col <- deparse(substitute(riding_col))
-  value.col <- deparse(substitute(value_col))
+
+
+  if (is.symbol(substitute(riding_col))) {
+    riding.col <- deparse(substitute(riding_col))
+  } else {
+    riding.col <- riding_col
+  }
+
+  if (is.symbol(substitute(value_col))) {
+    riding.col <- deparse(substitute(value_col))
+  } else {
+    riding.col <- value_col
+  }
+
+  if (is.symbol(substitute(province))) {
+    province_chr <- deparse(substitute(province))
+  } else {
+    province_chr <- province
+  }
+
+  if (is.symbol(substitute(shape))) {
+    shape_chr <- deparse(substitute(shape))
+  } else {
+    shape_chr <- shape
+  }
+
   riding.df <- riding_data
   riding.df$riding_code <- riding_data[, riding.col]
   riding.df$value.col <- riding_data[, value.col]
   riding.df <- riding.df[, c("riding_code", "value.col")]
-  if (shape == "square") {
+
+
+  # SQUARE TILE PLOTS
+  if (shape_chr == "square") {
     if (provincial == FALSE) {
       if (year == 2015) {
         riding_coords <- mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order ==
@@ -79,7 +107,7 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
                                  riding.merged.dat.arranged_b)
     }
     gg <- ggplot2::ggplot()
-    gg <- gg + scale_y_reverse()
+    gg <- gg + ggplot2::scale_y_reverse()
     gg <- gg + ggplot2::geom_tile(data = riding.merged.dat,
                                   aes_string(x = "y", y = "x", fill = "value.col"),
                                   color = riding_border_col, size = riding_border_size)
@@ -92,7 +120,12 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
     gg <- gg + ggplot2::coord_equal()
     gg <- gg + ggplot2::labs(x = NULL, y = NULL)
   }
-  if (shape == "hexagon") {
+
+
+
+
+  # HEXAGONAL TILE PLOTS
+  if (shape_chr == "hexagon") {
     if (provincial == FALSE) {
       if (year == 2015) {
         riding_coords <- mapcan::federal_riding_hexagons[mapcan::federal_riding_hexagons$representation_order ==
@@ -121,7 +154,7 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
     }
     riding.df$riding_code <- as.numeric(riding.df$riding_code)
     riding_coords$riding_code <- as.numeric(riding_coords$riding_code)
-    riding.merged.dat <- inner_join(riding_coords, riding.df)
+    riding.merged.dat <- dplyr::inner_join(riding_coords, riding.df)
     riding.merged.dat$riding_code <- as.numeric(riding.merged.dat$riding_code)
     if (arrange == TRUE) {
       riding.merged.dat.arranged_a <- riding.merged.dat %>%
