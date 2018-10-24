@@ -11,8 +11,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
   message = FALSE,
-  fig.width = 8,
-  fig.height = 6,
+  fig.width = 10,
+  fig.height = 8,
   comment = "#>",
   fig.path = "README-"
 )
@@ -162,5 +162,6 @@ ggplot(census_cartogram_data, aes(long, lat, group = group, fill = population_20
   coord_fixed() +
   ggtitle("Population cartogram of census division populations")
 ```
+
 Shading the census divisions by population size shows how the cartogram inflates divisions with larger populations (i.e. Vancouver, Edmonton, Calgary, Toronto, and Montreal all become larger). 
 
