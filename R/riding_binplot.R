@@ -44,9 +44,9 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
   }
 
   if (is.symbol(substitute(value_col))) {
-    riding.col <- deparse(substitute(value_col))
+    value.col <- deparse(substitute(value_col))
   } else {
-    riding.col <- value_col
+    value.col <- value_col
   }
 
   if (is.symbol(substitute(province))) {

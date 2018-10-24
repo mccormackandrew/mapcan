@@ -52,7 +52,7 @@ mapcan <- function(boundaries,
       mapcan_data <- mapcan::provinces_territories_carto
     }
     if (type_chr == "cartogram" & territories == FALSE) {
-      mapcan_data <- mapcan::census_divisions_2016_noterr_carto
+      mapcan_data <- mapcan::provinces_noterr_carto
     }
     if (type_chr == "bins") {
       stop("Binned maps only for electoral district boundaries")

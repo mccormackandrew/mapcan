@@ -84,16 +84,12 @@ Not interested in the territories? No problem.
 Population cartograms
 ---------------------
 
-`mapcan()` can also be used to plot population cartograms. Based on the geographic distribution of Canadians (most Canadians live near the US border and very few live in the north), these maps are highly distorted.
+`mapcan()` can also be used to plot population cartograms. Based on the geographic distribution of Canadians (most Canadians live near the US border and very few live in the north), these maps are highly distorted. Shading the census divisions by population size shows how the cartogram inflates divisions with larger populations (i.e. Vancouver, Edmonton, Calgary, Toronto, and Montreal all become larger).
 
 ``` r
-# Get census population data to use with geographic data
-censuspop <- mapcan::census_pop2016
-
+# Census population data is included in the geographic data frame that mapcan() returns
 census_cartogram_data <- mapcan(boundaries = census,
        type = cartogram)
-
-census_cartogram_data <- left_join(census_cartogram_data, censuspop)
 
 ggplot(census_cartogram_data, aes(long, lat, group = group, fill = population_2016)) +
   geom_polygon() +
@@ -105,4 +101,44 @@ ggplot(census_cartogram_data, aes(long, lat, group = group, fill = population_20
 
 ![](README-unnamed-chunk-9-1.png)
 
-Shading the census divisions by population size shows how the cartogram inflates divisions with larger populations (i.e. Vancouver, Edmonton, Calgary, Toronto, and Montreal all become larger).
+Let's plot the share of individuals born outside of Canada in each census division as a standard choropleth map then as a population cartogram.
+
+``` r
+# Get census born outside of Canada data to use with geographic data
+census_immigrant_share <- mapcan::census_pop2016 %>%
+  select(census_division_code, born_outside_canada_share)
+
+# Get population cartogram geograpic data
+census_choropleth_data <- mapcan(boundaries = census,
+       type = standard)
+
+# Merge together 
+census_choropleth_data <- left_join(census_choropleth_data, census_immigrant_share)
+
+ggplot(census_choropleth_data, aes(long, lat, group = group, fill = born_outside_canada_share)) +
+  geom_polygon() +
+  scale_fill_viridis_c() +
+  theme_mapcan() +
+  coord_fixed() +
+  ggtitle("Population cartogram of census division populations")
+```
+
+![](README-unnamed-chunk-10-1.png)
+
+``` r
+# Get population cartogram geograpic data
+census_cartogram_data <- mapcan(boundaries = census,
+       type = cartogram)
+
+# Merge together 
+census_cartogram_data <- left_join(census_cartogram_data, census_immigrant_share)
+
+ggplot(census_cartogram_data, aes(long, lat, group = group, fill = born_outside_canada_share)) +
+  geom_polygon() +
+  scale_fill_viridis_c() +
+  theme_mapcan() +
+  coord_fixed() +
+  ggtitle("Population cartogram of census division populations")
+```
+
+![](README-unnamed-chunk-11-1.png)

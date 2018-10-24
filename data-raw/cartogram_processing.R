@@ -263,6 +263,11 @@ census_divisions_2016_carto <- census_divisions_2016_carto %>%
   mutate(census_code = id) %>%
   dplyr::select(-id)
 
+census_divisions_2016_carto$census_division_code <- as.numeric(census_divisions_2016_carto$census_code)
+
+census_divisions_2016_carto <- census_divisions_2016_carto %>%
+  select(-census_code)
+
 # Save data
 use_data(census_divisions_2016_carto)
 

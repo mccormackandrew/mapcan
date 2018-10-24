@@ -271,7 +271,9 @@ census_divisions_2016$pr_french <- dplyr::recode(census_divisions_2016$pr_sgc_co
                                            `61` = "Territoires du Nord-Ouest",
                                            `62` = "Nunavut")
 
-
+census_divisions_2016$census_division_code <- as.numeric(census_divisions_2016$census_code)
+census_divisions_2016 <- census_divisions_2016 %>%
+  select(-census_code)
 # Save census_divisions_2016 R data object into data/
 use_data(census_divisions_2016)
 

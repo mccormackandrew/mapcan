@@ -2,7 +2,7 @@ library(tidyverse)
 
 # Source: https://www12.statcan.gc.ca/census-recensement/2016/dp-pd/hlt-fst/pd-pl/comprehensive.cfm
 
-census_pop2016 <- read.csv("data-raw/census_divisions_2016_rawdata.csv")
+census_pop2016 <- read.csv("data-raw/census_divisions_2016_rawdata.csv", stringsAsFactors = FALSE)
 
 census_pop2016 <- census_pop2016[1:which(census_pop2016$Geographic.code == "Note:") - 1, ]
 
@@ -59,6 +59,18 @@ census_pop2016$pr_alpha <- dplyr::recode(census_pop2016$pr_sgc_code,
                                           `61` = "NT",
                                           `62` = "NU")
 
+census_pop2016$census_division_code <- as.numeric(census_pop2016$census_division_code)
+
+# Load in born outside Canada data
+load(file = "data-raw/riding_characteristics/census_divisions_immigrants.Rdata")
+
+census_pop2016 <- inner_join(census_pop2016, census_divisions_immigrants, by = "census_division_code") %>%
+  mutate(census_division_name = census_division_name.y) %>%
+  select(-c(census_division_name.x, census_division_name.y)) %>%
+  mutate(born_outside_canada_share = born_outside_canada/population_2016)
+
+census_pop2016 %>%
+  arrange(desc(born_outside_canada_share))
 
 census_pop2016 %>% filter(population_2016 > 10000000)
 
