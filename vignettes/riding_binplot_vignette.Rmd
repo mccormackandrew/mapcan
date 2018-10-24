@@ -157,14 +157,14 @@ riding_binplot(quebec_provincial_results,
                riding_col = riding_code, 
                continuous = FALSE, 
                provincial = TRUE,
-               province = QC) +
+               province = QC,
+               shape = "hexagon") +
   theme_mapcan() +
   scale_fill_manual(name = "Winning party", 
                     values = c("deepskyblue1", "red","royalblue4",  "orange")) +
   theme(plot.background = element_rect(fill = "transparent"),
         legend.background = element_rect(fill = "transparent"),
         legend.position = "bottom")
-
 ```
 
 

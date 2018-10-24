@@ -29,84 +29,122 @@
 #' riding_binplot(riding_data = election_2015, riding code = riding_code, value_col = party, continuous = TRUE, arrange = TRUE)
 #'
 #' @export
-riding_binplot <- function(riding_data,
-                         riding_col = riding_code,
-                         value_col,
-                         continuous = TRUE,
-                         arrange = FALSE,
-                         palette = "Greens",
-                         riding_border_col = "white",
-                         year = 2015,
-                         riding_border_size = 1,
-                         provincial = FALSE,
-                         province)
-  {
-
+riding_binplot <- function(riding_data, riding_col = riding_code, value_col, continuous = TRUE,
+          arrange = FALSE, palette = "Greens", riding_border_col = "white",
+          year = 2015, riding_border_size = 1, provincial = FALSE,
+          shape = "square", province)
+{
   riding.col <- deparse(substitute(riding_col))
   value.col <- deparse(substitute(value_col))
-
   riding.df <- riding_data
-
-  riding.df$riding_code <- riding_data[ , riding.col]
-  riding.df$value.col <- riding_data[ , value.col]
-
-  riding.df <- riding.df[ , c("riding_code", "value.col")]
-
-  if(provincial == FALSE) {
-    if(year == 2015) {
-      riding_coords <- federal_riding_bins[federal_riding_bins$representation_order == 2013, ]
-      } else if (year %in% c(2004, 2006, 2008, 2011)) {
-        riding_coords <- federal_riding_bins[federal_riding_bins$representation_order == 2003, ]
-        } else if (year %in% c(1997, 2000)) {
-          riding_coords <- federal_riding_bins[federal_riding_bins$representation_order == 1996, ]
-          } else {
-            stop("Not a valid election year.")
-          }
-  }
-
-  if(provincial == TRUE) {
-    province_char <- deparse(substitute(province))
-    if(province_char == "QC") {
-      riding_coords <- quebec_riding_bins
-      } else {
+  riding.df$riding_code <- riding_data[, riding.col]
+  riding.df$value.col <- riding_data[, value.col]
+  riding.df <- riding.df[, c("riding_code", "value.col")]
+  if (shape == "square") {
+    if (provincial == FALSE) {
+      if (year == 2015) {
+        riding_coords <- mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order ==
+                                                       2013, ]
+      }
+      else if (year %in% c(2004, 2006, 2008, 2011)) {
+        riding_coords <- mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order ==
+                                                       2003, ]
+      }
+      else if (year %in% c(1997, 2000)) {
+        riding_coords <- mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order ==
+                                                       1996, ]
+      }
+      else {
+        stop("Not a valid election year.")
+      }
+    }
+    if (provincial == TRUE) {
+      province_char <- deparse(substitute(province))
+      if (province_char == "QC") {
+        riding_coords <- quebec_riding_bins
+      }
+      else {
         stop("Province (2-letter code) not valid, or provincial election boundaries for this province not supported yet.")
       }
-  }
-
-  # Merge riding coordinates and riding data together
-  riding.merged.dat <- merge(riding_coords,
-                      riding.df,
-                      by = "riding_code",
-                      all.y = TRUE,
-                      sort = TRUE)
-
-  riding.merged.dat$riding_code <- as.numeric(riding.merged.dat$riding_code)
-
-  if(arrange == TRUE) {
-    riding.merged.dat.arranged_a <- riding.merged.dat %>%
-      arrange(pr_alpha, value.col) %>%
-      dplyr::select(value.col)
-    riding.merged.dat.arranged_b <- dplyr::select(riding.merged.dat, -value.col) %>%
-        arrange(pr_alpha, riding_code)
-    riding.merged.dat <- cbind(riding.merged.dat.arranged_a, riding.merged.dat.arranged_b)
-  }
-
-  gg <- ggplot()
-  gg <- gg + scale_y_reverse()
-  gg <- gg + geom_tile(data = riding.merged.dat,
-                       aes_string(x = "y",
-                                  y = "x",
-                                  fill = "value.col"),
-                      color = riding_border_col,
-                      size = riding_border_size)
-
-  if(continuous == T) {
-    #gg <- gg + scale_fill_distiller(palette = palette, direction = 1)
-    gg <- gg + scale_fill_viridis_c(riding.col)
-  } else if (continuous == F) {
-    gg <- gg + scale_fill_viridis_d(riding.col)
     }
-  gg <- gg + coord_equal()
-  gg <- gg + labs(x = NULL, y = NULL)
-  gg
+    riding.merged.dat <- base::merge(riding_coords, riding.df,
+                                     by = "riding_code", all.y = TRUE, sort = TRUE)
+    riding.merged.dat$riding_code <- as.numeric(riding.merged.dat$riding_code)
+    if (arrange == TRUE) {
+      riding.merged.dat.arranged_a <- riding.merged.dat %>%
+        dplyr::arrange(pr_alpha, value.col) %>% dplyr::select(value.col)
+      riding.merged.dat.arranged_b <- dplyr::select(riding.merged.dat,
+                                                    -value.col) %>% dplyr::arrange(pr_alpha, riding_code)
+      riding.merged.dat <- cbind(riding.merged.dat.arranged_a,
+                                 riding.merged.dat.arranged_b)
+    }
+    gg <- ggplot2::ggplot()
+    gg <- gg + scale_y_reverse()
+    gg <- gg + ggplot2::geom_tile(data = riding.merged.dat,
+                                  aes_string(x = "y", y = "x", fill = "value.col"),
+                                  color = riding_border_col, size = riding_border_size)
+    if (continuous == T) {
+      gg <- gg + ggplot2::scale_fill_viridis_c(riding.col)
+    }
+    else if (continuous == F) {
+      gg <- gg + ggplot2::scale_fill_viridis_d(riding.col)
+    }
+    gg <- gg + ggplot2::coord_equal()
+    gg <- gg + ggplot2::labs(x = NULL, y = NULL)
+  }
+  if (shape == "hexagon") {
+    if (provincial == FALSE) {
+      if (year == 2015) {
+        riding_coords <- mapcan::federal_riding_hexagons[mapcan::federal_riding_hexagons$representation_order ==
+                                                           2013, ]
+      }
+      else if (year %in% c(2004, 2006, 2008, 2011)) {
+        riding_coords <- mapcan::federal_riding_hexagons[mapcan::federal_riding_hexagons$representation_order ==
+                                                           2003, ]
+      }
+      else if (year %in% c(1997, 2000)) {
+        riding_coords <- mapcan::federal_riding_hexagons[mapcan::federal_riding_hexagons$representation_order ==
+                                                           1996, ]
+      }
+      else {
+        stop("Not a valid election year.")
+      }
+    }
+    if (provincial == TRUE) {
+      province_char <- deparse(substitute(province))
+      if (province_char == "QC") {
+        riding_coords <- quebec_riding_hexagons
+      }
+      else {
+        stop("Province (2-letter code) not valid, or provincial election boundaries for this province not supported yet.")
+      }
+    }
+    riding.df$riding_code <- as.numeric(riding.df$riding_code)
+    riding_coords$riding_code <- as.numeric(riding_coords$riding_code)
+    riding.merged.dat <- inner_join(riding_coords, riding.df)
+    riding.merged.dat$riding_code <- as.numeric(riding.merged.dat$riding_code)
+    if (arrange == TRUE) {
+      riding.merged.dat.arranged_a <- riding.merged.dat %>%
+        dplyr::arrange(pr_alpha, value.col) %>% dplyr::select(value.col)
+      riding.merged.dat.arranged_b <- dplyr::select(riding.merged.dat,
+                                                    -value.col) %>% dplyr::arrange(pr_alpha, riding_code)
+      riding.merged.dat <- cbind(riding.merged.dat.arranged_a,
+                                 riding.merged.dat.arranged_b)
+    }
+    gg <- ggplot2::ggplot()
+    gg <- gg + ggplot2::scale_y_reverse()
+    gg <- gg + ggplot2::geom_polygon(data = riding.merged.dat,
+                                     aes_string(x = "long", y = "lat", group = "group",
+                                                fill = "value.col"))
+    if (continuous == T) {
+      gg <- gg + ggplot2::scale_fill_viridis_c(riding.col)
+    }
+    else if (continuous == F) {
+      gg <- gg + ggplot2::scale_fill_viridis_d(riding.col)
+    }
+    gg <- gg + ggplot2::coord_equal()
+    gg <- gg + ggplot2::labs(x = NULL, y = NULL)
+  }
+  return(gg)
 }
+

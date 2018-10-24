@@ -77,19 +77,20 @@ federal_riding_bins$y <- as.numeric(federal_riding_bins$y)
 table(federal_riding_bins[federal_riding_bins$representation_order == 2013, ]$pr_alpha)
 
 
-
-
-
 ## NOT A FINAL SOLUTION HERE
 ## RIDING CODES FOR OTHER REPRESENTATION ORDERS MUST ALSO BE ADDED
 
 representation_2013_ridings <- readxl::read_excel("data-raw/canada_squares.xls", sheet = "representation_2013_ridings")
+representation_2003_ridings <- readxl::read_excel("data-raw/canada_squares.xls", sheet = "representation_2003_ridings")
+representation_1996_ridings <- readxl::read_excel("data-raw/canada_squares.xls", sheet = "representation_1996_ridings")
 
 representation_2013_ridings <- binsfun(representation_2013_ridings, "2013")
+representation_2003_ridings <- binsfun(representation_2003_ridings, "2003")
+representation_1996_ridings <- binsfun(representation_1996_ridings, "1996")
 
-federal_riding_bins$riding_code <- c(rep(NA, nrow(federal_riding_bins) - nrow(representation_2013_ridings)),
+federal_riding_bins$riding_code <- c(representation_1996_ridings$value.2,
+                                     representation_2003_ridings$value.2,
                                      representation_2013_ridings$value.2)
-
 
 use_data(federal_riding_bins)
 

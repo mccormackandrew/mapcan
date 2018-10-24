@@ -6,3 +6,4 @@ inst/doc
 
 #directories
 /data-raw/shapefile_data*
+/data-raw/riding_characteristics*
