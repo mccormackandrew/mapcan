@@ -11,6 +11,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
   message = FALSE,
+  fig.width = 8,
+  fig.height = 6,
   comment = "#>",
   fig.path = "README-"
 )
@@ -23,6 +25,7 @@ knitr::opts_chunk$set(
 ## Installing mapcan
 
 `library(devtools)`
+
 `install_github("mccormackandrew/mapcan", build_vignettes = TRUE)`
 
 I suggest that you pass the `build_vignettes = TRUE` to `install_github()`. The vignettes provide detailed guides on how `mapcan`'s functions operate.

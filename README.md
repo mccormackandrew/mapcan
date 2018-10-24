@@ -7,7 +7,9 @@ mapcan
 Installing mapcan
 -----------------
 
-`library(devtools)` `install_github("mccormackandrew/mapcan", build_vignettes = TRUE)`
+`library(devtools)`
+
+`install_github("mccormackandrew/mapcan", build_vignettes = TRUE)`
 
 I suggest that you pass the `build_vignettes = TRUE` to `install_github()`. The vignettes provide detailed guides on how `mapcan`'s functions operate.
 
