@@ -1,6 +1,6 @@
 library(mapcan)
 
-qc <- mapcan::quebec_riding_bins
+qc <- quebec_riding_bins
 
 coords_to_spdf <- function(coordinate_data, hex_size, xval, yval, value, bin_num) {
   # Create empty list to fill with polygon coordinate data frames
@@ -79,17 +79,16 @@ spdf_to_df <- function(spdf, data, value) {
 
 ##### IMPLEMENTING THE FUNCTION ####
 
-
 ## Quebec ridings
 qc_spdf <- coords_to_spdf(qc, hex_size = 2, xval = "y", yval = "x", bin_num = 125, value = "riding_code")
 
-quebec_riding_hex <- spdf_to_df(qc_spdf, qc, "riding_code")
+quebec_riding_hexagons <- spdf_to_df(qc_spdf, qc, "riding_code")
 
 #ggplot(quebec_riding_hex, aes(long, lat, group = group)) +
 #  geom_polygon() +
 #  scale_y_reverse()
 
-use_data(quebec_riding_hex)
+use_data(quebec_riding_hexagons)
 
 ## Federal ridings
 fed2013 <- mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order == 2013, ]

@@ -65,6 +65,8 @@ quebec_riding_bins <- left_join(quebec_riding_bins, qc_ridings_vars[ , c("region
 
 names(quebec_riding_bins) <- c("y", "x", "riding_code", "region", "riding_simplified", "riding_name")
 
+quebec_riding_bins$riding_code <- as.numeric(quebec_riding_bins$riding_code)
+
 use_data(quebec_riding_bins, overwrite = T)
 
 

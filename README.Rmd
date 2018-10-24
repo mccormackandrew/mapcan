@@ -9,6 +9,8 @@ output:
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
   comment = "#>",
   fig.path = "README-"
 )
@@ -16,7 +18,14 @@ knitr::opts_chunk$set(
 
 # mapcan
 
-`mapcan` is an R package that provides convenient tools for plotting a variety of Canadian maps with the `ggplot2` package. 
+`mapcan` is an R package that provides convenient tools for plotting Canadian choropleth maps and choropleth alternatives. 
+
+## Installing mapcan
+
+`library(devtools)`
+`install_github("mccormackandrew/mapcan", build_vignettes = TRUE)`
+
+I suggest that you pass the `build_vignettes = TRUE` to `install_github()`. The vignettes provide detailed guides on how `mapcan`'s functions operate.
 
 # Using mapcan
 
@@ -24,57 +33,69 @@ knitr::opts_chunk$set(
 
 ```{r echo = TRUE, warning = FALSE, message = FALSE}
 library(mapcan)
-library(ggplot2)
 library(tidyverse)
-library(paletteer)
 ```
 
 
 ## Tile grid map of Canadian federal electoral ridings
 
+`riding_binplot()` can be used to create tile cartograms at federal and provincial riding levels (note that only Quebec provincial ridings are supported right now). Here is an example:
+
 ```{r echo = FALSE}
-federal_riding_bins <- mapcan::federal_riding_bins
+# Load data that will be plotted with riding_binplot 
+fed2015 <- mapcan::federal_election_results %>%
+  filter(election_year == 2015)
 
-federal_riding_bins$pr_alpha <- factor(federal_riding_bins$pr_alpha, levels = c("BC", "AB", "SK", "MB", "ON", "QC", "NL", "NB", "PE", "NS"))
-
-ggplot(federal_riding_bins[federal_riding_bins$representation_order == 2013, ], aes(x = y, y = x, fill = pr_alpha)) +
-  geom_raster() +
-  geom_tile(colour = "white", size = 1.5, fill = NA) +
-  paletteer::scale_fill_paletteer_d("ggthemes", "tableau_greenorange12") +
-  coord_fixed() +
-  scale_y_reverse() +
-  theme_light()  +
-  theme(panel.grid = element_blank(),
-        panel.border = element_blank(),
-        axis.text = element_blank(), 
-        axis.title = element_blank(),
-        legend.position = "bottom") +
-  guides(fill = guide_legend(keywidth = 0.6, keyheight = 0.3,
-                             nrow = 1, title = NULL)) +
-  ggtitle("Canadian federal electoral ridings (2013 representation order)")
+riding_binplot(riding_data = fed2015,
+               # Use the party (winning party) varibale from fed2015
+               value_col = party, 
+               # Arrange by value_col within provinces
+               arrange = TRUE,
+               # party is a categorical variable
+               continuous = FALSE) +
+  # Change the colours to match the parties' colours
+  scale_fill_manual(name = "Party",
+                    values = c("mediumturquoise", "blue", "springgreen3", "red", "orange")) +
+  # mapcan ggplot theme removes axis labels, background grid, and other unnecessary elements when plotting maps
+  theme_mapcan() +
+  ggtitle("Tile grid map of 2015 federal election results")
 ```
+
+Perhaps you are averse to squares. That is ok. Try hexagons instead:
 
 ```{r}
-sum(table(federal_election_results_2015$pr_alpha))
-table(federal_riding_bins$pr_alpha)
+riding_binplot(riding_data = fed2015,
+               # Use the party (winning party) varibale from fed2015
+               value_col = party, 
+               # Arrange by value_col within provinces
+               arrange = TRUE,
+               # party is a categorical variable
+               continuous = FALSE,
+               shape = "hexagon") +
+  # Change the colours to match the parties' colours
+  scale_fill_manual(name = "Party",
+                    values = c("mediumturquoise", "blue", "springgreen3", "red", "orange")) +
+  # mapcan ggplot theme removes axis labels, background grid, and other unnecessary elements when plotting maps
+  theme_mapcan() +
+  ggtitle("Hex tile map of 2015 federal election results")
 ```
 
+Perhaps you are interested in provincial election results, not federal election results. That is also ok. Try plotting the Quebec 2018 provincial election results:
+
 ```{r }
-ggplot(federal_riding_bins[federal_riding_bins$representation_order == 2003, ], aes(x = y, y = x, fill = pr_alpha)) +
-  geom_raster() +
-  geom_tile(colour = "white", size = 1.5, fill = NA) +
-  paletteer::scale_fill_paletteer_d("ggthemes", "tableau_greenorange12") +
-  coord_fixed() +
-  scale_y_reverse() +
-  theme_light()  +
-  theme(panel.grid = element_blank(),
-        panel.border = element_blank(),
-        axis.text = element_blank(), 
-        axis.title = element_blank(),
-        legend.position = "bottom") +
-  guides(fill = guide_legend(keywidth = 0.6, keyheight = 0.3,
-                             nrow = 1, title = NULL)) +
-  ggtitle("Canadian federal electoral ridings (2003 representation order)")
+# Load data that will be plotted with riding_binplot 
+riding_binplot(quebec_provincial_results,
+               value_col = party,
+               riding_col = riding_code, 
+               continuous = FALSE, 
+               provincial = TRUE,
+               province = QC,
+               shape = "hexagon") +
+  theme_mapcan() +
+  scale_fill_manual(name = "Winning party", 
+                    values = c("deepskyblue1", "red","royalblue4",  "orange")) +
+  ggtitle("Hex tile map of 2018 provincial election results")
+  
 ```
 
 ```{r include = FALSE, echo = FALSE}
@@ -82,93 +103,61 @@ paletteer::palettes_d_names
 paletteer::paletteer_d("ggsci", "category10_d3")
 ```
 
-## 2015 Canadian federal election results
+## Standard choropleth maps
+
+The `mapcan()` returns geographic coordinate data frames at census division, federal riding, and provincial levels. 
 
 ```{r echo = FALSE}
-federal_ridings <- mapcan::federal_ridings
+# Obtain geographic data with mapcan() function
+canada_ridings <- mapcan(boundaries = ridings,
+       type = standard)
 
-federal_ridings <- left_join(federal_ridings, riding_info, by = c("riding_code" = "riding_code"))
+canada_ridings <- left_join(canada_ridings, fed2015, by = c("riding_code" = "riding_code"))
 
-ggplot(federal_ridings, aes(long, lat, group = group, fill = party)) +
+ggplot(canada_ridings, aes(long, lat, group = group, fill = party)) +
   geom_polygon() +
   scale_fill_manual(values = c("darkslategray3", "dodgerblue3", "green", "firebrick1", "darkorange1")) +
-  theme_light() +
-  theme(panel.grid = element_blank(),
-        panel.border = element_blank(),
-        axis.text = element_blank(), 
-        axis.title = element_blank(),
-        legend.title = element_blank()) +
+  theme_mapcan() +
+  coord_fixed()
+```
+
+Not interested in the territories? No problem.
+
+```{r echo = FALSE}
+# Obtain geographic data with mapcan() function
+canada_ridings <- mapcan(boundaries = ridings,
+       type = standard,
+       territories = FALSE)
+
+canada_ridings <- left_join(canada_ridings, fed2015, by = c("riding_code" = "riding_code"))
+
+ggplot(canada_ridings, aes(long, lat, group = group, fill = party)) +
+  geom_polygon() +
+  scale_fill_manual(values = c("darkslategray3", "dodgerblue3", "green", "firebrick1", "darkorange1")) +
+  theme_mapcan() +
   coord_fixed()
 ```
 
 
+## Population cartograms
 
-## Provincial/territorial cartogram
+`mapcan()` can also be used to plot population cartograms. Based on the geographic distribution of Canadians (most Canadians live near the US border and very few live in the north), these maps are highly distorted. 
 
-```{r echo = FALSE}
-provinces_territories_carto_df <- mapcan::provinces_territories_carto_df
+```{r}
+# Get census population data to use with geographic data
+censuspop <- mapcan::census_pop2016
 
-ggplot(provinces_territories_carto_df, aes(long, lat, group = group, fill = population)) +
+census_cartogram_data <- mapcan(boundaries = census,
+       type = cartogram)
+
+census_cartogram_data <- left_join(census_cartogram_data, censuspop)
+
+ggplot(census_cartogram_data, aes(long, lat, group = group, fill = population_2016)) +
   geom_polygon() +
-  theme_light() +
-  scale_fill_gradient(low = "indianred1", high = "darkred") + 
-  theme(panel.grid = element_blank(),
-        panel.border = element_blank(),
-        axis.text = element_blank(), 
-        axis.title = element_blank(),
-        legend.title = element_blank()) +
+  scale_fill_viridis_c() +
+  theme_mapcan() +
   coord_fixed() +
-  ggtitle("Provincial/territorial cartogram\n(distorted by population)")
-
-provinces_noterr_carto_df <- mapcan::provinces_noterr_carto_df
-
-ggplot(provinces_noterr_carto_df, aes(long, lat, group = group, fill = population)) +
-  geom_polygon() +
-  theme_light() +
-  scale_fill_gradient(low = "indianred1", high = "darkred") + 
-  theme(panel.grid = element_blank(),
-        panel.border = element_blank(),
-        axis.text = element_blank(), 
-        axis.title = element_blank(),
-        legend.title = element_blank()) +
-  coord_fixed() +
-  ggtitle("Provincial/territorial cartogram\n(distorted by population),\nterritories excluded")
-
+  ggtitle("Population cartogram of census division populations")
 ```
-## Census division cartograms
-```{r echo = FALSE}
-census_divisions_2016_carto_df <- mapcan::census_divisions_2016_carto_df
-
-ggplot(census_divisions_2016_carto_df, aes(long, lat, group = group, fill = population_2016)) +
-  geom_polygon() +
-  theme_light() +
-  scale_fill_gradient(low = "darkslategray", high = "darkslategray3", 
-                      labels = scales::comma,
-                      breaks = seq(0, 2731571, 500000)) + 
-  guides(fill = guide_colorbar(barwidth = 1, barheight = 8, label.hjust = 1.2)) +
-  theme(panel.grid = element_blank(),
-        panel.border = element_blank(),
-        axis.text = element_blank(), 
-        axis.title = element_blank(),
-        legend.title = element_blank()) +
-  coord_fixed() +
-  ggtitle("2016 census divisions cartogram (distorted by population)") 
-
-census_divisions_2016_noterr_carto_df <- mapcan::census_divisions_2016_noterr_carto_df
-
-ggplot(census_divisions_2016_noterr_carto_df, aes(long, lat, group = group, fill = population_2016)) +
-  geom_polygon() +
-  theme_light() +
-  scale_fill_gradient(low = "darkslategray", high = "darkslategray3", 
-                      labels = scales::comma,
-                      breaks = seq(0, 2731571, 500000)) + 
-  guides(fill = guide_colorbar(barwidth = 1, barheight = 8, label.hjust = 1.2)) +
-  theme(panel.grid = element_blank(),
-        panel.border = element_blank(),
-        axis.text = element_blank(), 
-        axis.title = element_blank(),
-        legend.title = element_blank()) +
-  coord_fixed() +
-  ggtitle("2016 census divisions cartogram (distorted by population), territories excluded") 
-```
+Shading the census divisions by population size shows how the cartogram inflates divisions with larger populations (i.e. Vancouver, Edmonton, Calgary, Toronto, and Montreal all become larger). 
 
