@@ -100,7 +100,7 @@ fed_2015 %>%
 
 Compared to a standard cloropeth map, the tile grid map gives us a better sense of how the 2015 federal election shaped up:
 
-```{r}
+```{r fig.width = 8, fig.height=4, warning = FALSE}
 fed_2015_cloropleth <- mapcan(boundaries = ridings, type = standard)
 
 left_join(fed_2015_cloropleth, fed_2015, by = "riding_code") %>%
@@ -137,10 +137,10 @@ federal_election_results %>%
                  continuous = TRUE) +
   theme_mapcan() +
   ggtitle("Tile grid map of 2015 federal election voter turnout")
-
 ```
 
 Like with the election results that are plotted above, we may want to arrange the values of voter turnout within provinces. Fortunately, we can also use the `arrange = TRUE` argument when the riding-level variable is continuous. 
+
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
 federal_election_results %>%
   filter(election_year == 2015) %>%
@@ -151,7 +151,27 @@ federal_election_results %>%
   ggtitle("Tile grid map of 2015 federal election voter turnout")
 ```
 
-```{r eval = FALSE}
+If squares are not your jam, you can also use hexagons with the `shape = hexagon` argument. Note that the default is `shape = square`.
+
+```{r fig.width = 8, fig.height=4, warning = FALSE}
+federal_election_results %>%
+  filter(election_year == 2015) %>%
+  riding_binplot(value = voter_turnout,
+                 continuous = TRUE,
+                 arrange = TRUE,
+                 shape = "hexagon") +
+  theme_mapcan() +
+  ggtitle("Hexagon grid map of 2015 federal election voter turnout")
+```
+
+
+### Provincial ridings
+
+Currently, only Quebec provincial ridings can be plotted with `riding_binplot()`. In the near future, `riding_binplot()` will be able to create bin plots for the other provinces. 
+
+To create a provincial riding plot, specify `provincial = TRUE` (to let riding_binplot know that it is provincial ridings you wish to plot) and `province = QC` for Quebec. 
+
+```{r fig.width = 8, fig.height=4, warning = FALSE}
 riding_binplot(quebec_provincial_results,
                value_col = party,
                riding_col = riding_code, 
@@ -162,9 +182,7 @@ riding_binplot(quebec_provincial_results,
   theme_mapcan() +
   scale_fill_manual(name = "Winning party", 
                     values = c("deepskyblue1", "red","royalblue4",  "orange")) +
-  theme(plot.background = element_rect(fill = "transparent"),
-        legend.background = element_rect(fill = "transparent"),
-        legend.position = "bottom")
+  ggtitle("Hexagon grid map of 2018 Quebec provincial election results")
 ```
 
 

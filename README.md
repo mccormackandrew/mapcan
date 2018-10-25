@@ -65,7 +65,7 @@ riding_binplot(quebec_provincial_results,
   theme_mapcan() +
   scale_fill_manual(name = "Winning party", 
                     values = c("deepskyblue1", "red","royalblue4",  "orange")) +
-  ggtitle("Hex tile map of 2018 provincial election results")
+  ggtitle("Hex tile map of 2018 Quebec election results")
 ```
 
 ![](README-unnamed-chunk-5-1.png)
@@ -73,7 +73,7 @@ riding_binplot(quebec_provincial_results,
 Standard choropleth maps
 ------------------------
 
-The `mapcan()` returns geographic coordinate data frames at census division, federal riding, and provincial levels.
+The `mapcan()` function returns geographic coordinate data frames at census division, federal riding, and provincial levels.
 
 ![](README-unnamed-chunk-7-1.png)
 
@@ -117,10 +117,10 @@ census_choropleth_data <- left_join(census_choropleth_data, census_immigrant_sha
 
 ggplot(census_choropleth_data, aes(long, lat, group = group, fill = born_outside_canada_share)) +
   geom_polygon() +
-  scale_fill_viridis_c() +
+  scale_fill_viridis_c(name = "Share of population born \noutside of Canada") +
   theme_mapcan() +
   coord_fixed() +
-  ggtitle("Population cartogram of census division populations")
+  ggtitle("Population cartogram of foerign born population by census division")
 ```
 
 ![](README-unnamed-chunk-10-1.png)
@@ -135,10 +135,12 @@ census_cartogram_data <- left_join(census_cartogram_data, census_immigrant_share
 
 ggplot(census_cartogram_data, aes(long, lat, group = group, fill = born_outside_canada_share)) +
   geom_polygon() +
-  scale_fill_viridis_c() +
+  scale_fill_viridis_c(name = "Share of population born \noutside of Canada") +
   theme_mapcan() +
   coord_fixed() +
-  ggtitle("Population cartogram of census division populations")
+  ggtitle("Population cartogram of foerign born population by census division")
 ```
 
 ![](README-unnamed-chunk-11-1.png)
+
+Comparing these two maps, it is clear that the standard choropleth map visually understates the share of the population that is foreign born in Canada.

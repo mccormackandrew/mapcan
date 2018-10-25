@@ -24,6 +24,8 @@
 #' for which provincial electoral boundaries are desired. (Note: this argument is still in development, only Quebec provincial
 #' boundaries are available at the moment.)
 #' @param shape Unquoted chacter expression specifying shape of tiles. Options are square and hexagon, default is square.
+#' @param legend_name Quoted chacter expression specifying the title of the legend. The variable name will be used as a default
+#' if no value is supplied.
 #' @examples
 #' election_2015 <- federal_election_results[federal_election_results$election_year == 2015, ]
 #'
@@ -33,7 +35,7 @@
 riding_binplot <- function(riding_data, riding_col = riding_code, value_col, continuous = TRUE,
           arrange = FALSE, palette = "Greens", riding_border_col = "white",
           year = 2015, riding_border_size = 1, provincial = FALSE,
-          shape = "square", province)
+          shape = "square", province, legend_name = "default")
 {
 
 
@@ -41,6 +43,12 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
     riding.col <- deparse(substitute(riding_col))
   } else {
     riding.col <- riding_col
+  }
+
+  if (legend_name == "default") {
+    legend.name <- deparse(substitute(value_col))
+  } else {
+    legend.name <- legend_name
   }
 
   if (is.symbol(substitute(value_col))) {
@@ -87,8 +95,7 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
       }
     }
     if (provincial == TRUE) {
-      province_char <- deparse(substitute(province))
-      if (province_char == "QC") {
+      if (province_chr == "QC") {
         riding_coords <- quebec_riding_bins
       }
       else {
@@ -112,10 +119,10 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
                                   aes_string(x = "y", y = "x", fill = "value.col"),
                                   color = riding_border_col, size = riding_border_size)
     if (continuous == T) {
-      gg <- gg + ggplot2::scale_fill_viridis_c(riding.col)
+      gg <- gg + ggplot2::scale_fill_viridis_c(name = legend.name)
     }
     else if (continuous == F) {
-      gg <- gg + ggplot2::scale_fill_viridis_d(riding.col)
+      gg <- gg + ggplot2::scale_fill_viridis_d(name = legend.name)
     }
     gg <- gg + ggplot2::coord_equal()
     gg <- gg + ggplot2::labs(x = NULL, y = NULL)
@@ -144,8 +151,7 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
       }
     }
     if (provincial == TRUE) {
-      province_char <- deparse(substitute(province))
-      if (province_char == "QC") {
+      if (province_chr == "QC") {
         riding_coords <- quebec_riding_hexagons
       }
       else {
@@ -170,10 +176,10 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
                                      aes_string(x = "long", y = "lat", group = "group",
                                                 fill = "value.col"))
     if (continuous == T) {
-      gg <- gg + ggplot2::scale_fill_viridis_c(riding.col)
+      gg <- gg + ggplot2::scale_fill_viridis_c(name = legend.name)
     }
     else if (continuous == F) {
-      gg <- gg + ggplot2::scale_fill_viridis_d(riding.col)
+      gg <- gg + ggplot2::scale_fill_viridis_d(name = legend.name)
     }
     gg <- gg + ggplot2::coord_equal()
     gg <- gg + ggplot2::labs(x = NULL, y = NULL)
