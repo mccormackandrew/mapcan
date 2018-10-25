@@ -28,6 +28,26 @@ Tile grid map of Canadian federal electoral ridings
 
 `riding_binplot()` can be used to create tile cartograms at federal and provincial riding levels (note that only Quebec provincial ridings are supported right now). Here is an example:
 
+``` r
+# Load data that will be plotted with riding_binplot 
+fed2015 <- mapcan::federal_election_results %>%
+  filter(election_year == 2015)
+
+riding_binplot(riding_data = fed2015,
+               # Use the party (winning party) varibale from fed2015
+               value_col = party, 
+               # Arrange by value_col within provinces
+               arrange = TRUE,
+               # party is a categorical variable
+               continuous = FALSE) +
+  # Change the colours to match the parties' colours
+  scale_fill_manual(name = "Party",
+                    values = c("mediumturquoise", "blue", "springgreen3", "red", "orange")) +
+  # mapcan ggplot theme removes axis labels, background grid, and other unnecessary elements when plotting maps
+  theme_mapcan() +
+  ggtitle("Tile grid map of 2015 federal election results")
+```
+
 ![](README-unnamed-chunk-3-1.png)
 
 Perhaps you are averse to squares. That is ok. Try hexagons instead:

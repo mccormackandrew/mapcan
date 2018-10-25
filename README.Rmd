@@ -44,7 +44,7 @@ library(tidyverse)
 
 `riding_binplot()` can be used to create tile cartograms at federal and provincial riding levels (note that only Quebec provincial ridings are supported right now). Here is an example:
 
-```{r echo = FALSE}
+```{r }
 # Load data that will be plotted with riding_binplot 
 fed2015 <- mapcan::federal_election_results %>%
   filter(election_year == 2015)
