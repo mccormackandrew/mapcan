@@ -59,6 +59,9 @@ provinces_territories$pr_alpha <- dplyr::recode(provinces_territories$pr_sgc_cod
        `61` = "NT",
        `62` = "NU")
 
+
+provinces_territories$pr_sgc_code <- as.numeric(provinces_territories$pr_sgc_code)
+str(provinces_territories)
 # Save R data object into data/
 use_data(provinces_territories)
 
@@ -197,6 +200,8 @@ census_divisions_2016 <- rgdal::readOGR("data-raw/shapefile_data/census_division
 # Shapefile is unnecessarily large for creating plots, make smaller
 census_divisions_2016 <- rmapshaper::ms_simplify(census_divisions_2016, keep = 0.01, keep_shapes = T)
 
+census_divisions_2016_backup <- census_divisions_2016
+
 # Add projection
 census_divisions_2016 <- sp::spTransform(census_divisions_2016,
                                      CRS("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"))
@@ -206,7 +211,6 @@ census_divisions_2016 <- rgeos::gBuffer(census_divisions_2016, byid=TRUE, width=
 
 # Save spdf
 census_divisions_2016_spdf <- census_divisions_2016
-
 use_data(census_divisions_2016_spdf)
 
 # Save data to merge
@@ -218,7 +222,6 @@ census_divisions_2016 <- ggplot2::fortify(census_divisions_2016,
 
 # Merge other data back in
 census_divisions_2016 <- dplyr::left_join(census_divisions_2016, census_divisions_2016_data, by = c("id" = "CDUID"))
-
 
 names(census_divisions_2016) <- c("long", "lat", "order", "hole", "piece", "census_code", "group", "census_division_name",
                                   "census_division_type", "pr_sgc_code", "province")

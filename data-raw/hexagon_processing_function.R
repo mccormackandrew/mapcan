@@ -1,4 +1,5 @@
 library(mapcan)
+library(sp)
 
 qc <- quebec_riding_bins
 
@@ -11,6 +12,77 @@ coords_to_spdf <- function(coordinate_data, hex_size, xval, yval, value, bin_num
     x <- coordinate_data[ , xval][i]
     y <- coordinate_data[ , yval][i]
     hx <- c(0.5, 1, sqrt(3)/2.1)
+    hex_coords <- hx/hex_size
+    xym <- cbind(c(x - hex_coords[1], x + hex_coords[1], x + hex_coords[2],
+                   x + hex_coords[1], x - hex_coords[1], x - hex_coords[2]),
+                 c(y + hex_coords[3], y + hex_coords[3], y,
+                   y - hex_coords[3], y - hex_coords[3], y))
+    xym <- data.frame(xym)
+    xym$x_orig <- x
+    xym$y_orig <- y
+    names(xym) <- c("x", "y", "x_orig", "y_orig")
+    polylist[[i]] <- xym
+  }
+
+  # Offset every second column so the hexagons snuggle up together
+  polylist_offset <- list()
+
+  for(i in 1:length(polylist)) {
+    if(polylist[[i]]$x_orig[1] %% 2 == 0) {
+      polylist_offset[[i]] <- polylist[[i]] %>%
+        mutate(y = y + 0.5)
+    } else {
+      polylist_offset[[i]] <- polylist[[i]]
+    }
+  }
+
+  # Keep only x and y
+  polylist_offset <- lapply(polylist_offset, function(x) {
+    x %>% dplyr::select(x, y)})
+
+  # Turn dataframes into matrices (for the Polygons function)
+  polylist_offset <- lapply(polylist_offset, as.matrix)
+
+  # Turn each polygon data frame into a polygon object
+  polylist_offset <- lapply(polylist_offset, Polygon)
+
+  # Combine them
+  #polylist_combined <- Polygons(polylist_offset, 1)
+
+  polygon_objects <- list()
+
+  for(i in 1:length(polylist_offset)) {
+    polygon_objects[[i]] <- Polygons(list(polylist_offset[[i]]), coordinate_data[ , value][i])
+
+  }
+
+  # Convert into an SpatialPolygons
+  polygon_sp <- SpatialPolygons(polygon_objects, 1:bin_num)
+
+  # Create data for
+  spdf_data <- data.frame(coordinate_data, row.names = coordinate_data[, value])
+
+  #Convert into an SpatialPolygonsDataFrame
+  polygon_spdf <- SpatialPolygonsDataFrame(polygon_sp, spdf_data)
+
+  return(polygon_spdf)
+}
+
+####################
+####################
+####################
+####################
+####################
+
+coords_to_spdf <- function(coordinate_data, hex_size, hex, xval, yval, value, bin_num) {
+  # Create empty list to fill with polygon coordinate data frames
+  polylist <- list()
+
+  # Create polygon coordinate data frames
+  for(i in 1:nrow(coordinate_data)) {
+    x <- coordinate_data[ , xval][i]
+    y <- coordinate_data[ , yval][i]
+    hx <- hex
     hex_coords <- hx/hex_size
     xym <- cbind(c(x - hex_coords[1], x + hex_coords[1], x + hex_coords[2],
                    x + hex_coords[1], x - hex_coords[1], x - hex_coords[2]),
@@ -80,13 +152,16 @@ spdf_to_df <- function(spdf, data, value) {
 ##### IMPLEMENTING THE FUNCTION ####
 
 ## Quebec ridings
-qc_spdf <- coords_to_spdf(qc, hex_size = 2, xval = "y", yval = "x", bin_num = 125, value = "riding_code")
+qc_spdf <- coords_to_spdf(qc,
+                          hex_size = 1.5,
+                          hex = c(0.5, 1, sqrt(3)/2.3),
+                          #hex_size = 1.6,
+                          #hex = c(0.5, 1, sqrt(3)/2.3),
+                          xval = "y", yval = "x",
+                          bin_num = 125,
+                          value = "riding_code")
 
 quebec_riding_hexagons <- spdf_to_df(qc_spdf, qc, "riding_code")
-
-#ggplot(quebec_riding_hex, aes(long, lat, group = group)) +
-#  geom_polygon() +
-#  scale_y_reverse()
 
 use_data(quebec_riding_hexagons)
 
