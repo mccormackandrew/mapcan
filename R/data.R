@@ -141,6 +141,15 @@
 #' (under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
 "census_divisions_2016"
 
+#' Census divisions SpatialPointsDataFrame
+#'
+#' @description A SpatialPointsDataFrame object (geographic coordinates and data) of census division boundaries,
+#' used to create the \code{census_divisions_2016} data frame.
+#' @format SpatialPointsDataFrame object.
+#' @source \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm},
+#' (under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
+"census_divisions_2016_spdf"
+
 #' Census divisions cartogram data frame (territories excluded)  (2016)
 #'
 #' @description A data set with geographic information for Canadian census divisions, census boundary divisions
@@ -259,8 +268,7 @@
 
 #' Canadian federal riding bins (used for tile plots)
 #'
-#' @description A data set with information on Canadian federal election results, dating back to 1997. These data
-#' are used in the \code{mapcan::riding_binplot()} function.
+#' @description A data set with coordinates for the \code{mapcan::riding_binplot()} function.
 #'
 #' @format A data.frame with 944 rows and 8 variables:
 #' \describe{
@@ -279,6 +287,7 @@
 #' }
 "federal_riding_bins"
 
+
 #' Annual provincial populations data frame dating back to 1971
 #'
 #' @description A data set with annual information on provincial and territorial populations dating back to 1971.
@@ -290,3 +299,123 @@
 #'   \item{year}{Year}
 #' }
 "province_pop_annual"
+
+#' Canadian federal riding hexagons (used for hexagonal tile plots)
+#'
+#' @description A data set with coordinates for the \code{mapcan::riding_binplot()} function.
+#'
+#' @format A data.frame with 6629 rows and 15 variables:
+#' \describe{
+#'   \item{long}{y-axis of riding hexagons}
+#'   \item{lat}{x-axis of riding hexagons}
+#'   \item{order}{Order of layers}
+#'   \item{hole}{Polygon hole (TRUE or FALSE)}
+#'   \item{piece}{Piece}
+#'   \item{group}{Group}
+#'   \item{representation_order}{Representation order. Specifies boundaries/seats for a given election
+#'   (e.g. the 2015 election used the 2013 repesentation order, with 338 seats).}
+#'   \item{pr_french}{Province or territory name (French).}
+#'   \item{pr_english}{Province or territory name (English).}
+#'   \item{pr_sgc_code}{Province Standard Geographical Classification
+#'                            (SGC) code.}
+#'   \item{riding_code}{Uniquely identifies a federal electoral district (composed of the
+#'               2-digit province/territory unique identifier followed by the
+#'               3-digit federal electoral district code).}
+#' }
+"federal_riding_hexagons"
+
+#' Quebec provincial ridings geographic data
+#'
+#' @description A data set with geographic information for Quebec provincial ridings
+#'
+#' @format A data.frame with 23995 rows and 11 variables:
+#' \describe{
+#'   \item{long}{y-axis of riding hexagons}
+#'   \item{lat}{x-axis of riding hexagons}
+#'   \item{order}{Order of layers}
+#'   \item{hole}{Polygon hole (TRUE or FALSE)}
+#'   \item{piece}{Piece}
+#'   \item{riding_code}{Uniquely identifies a provincial electoral district}
+#'   \item{group}{Group}
+#'   \item{riding_name}{Riding name (lowercase)}
+#'   \item{riding_name}{Riding name (uppercase)}
+#'   \item{centroid_long}{Longitude for riding centroids (useful for labelling)}
+#'   \item{centroid_lat}{Latitude for riding centroids (useful for labelling)}
+#' }
+"quebec_prov_ridings2018"
+
+#' Quebec provincial ridings SpatialPointsDataFrame
+#'
+#' @description A SpatialPointsDataFrame object (geographic coordinates and data) of 2018 Quebec provincial election
+#' riding boundaries, used to create the \code{quebec_prov_ridings2018} data frame.
+#'
+#' @format SpatialPointsDataFrame object.
+#' @source \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm},
+#' (under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
+"quebec_prov_ridings2018_spdf"
+
+#' Quebec provincial election results data
+#'
+#' @description A data set with information on 2018 Quebec provincial election results
+#'
+#' @format A data.frame with 125 rows and 6 variables:
+#' \describe{
+#'   \item{party}{Winning party of riding.}
+#'   \item{vote_share}{Percentage of vote won by winning candidate.}
+#'   \item{riding_code}{Uniquely identifies a provincial electoral district}
+#'   \item{riding_name}{Riding name (lowercase)}
+#'   \item{riding_name}{Riding name (uppercase)}
+#' }
+"quebec_provincial_results"
+
+#' Quebec provincial riding bins (used for tile plots)
+#'
+#' @description A data set with coordinates for the \code{mapcan::riding_binplot()} function.
+#'
+#' @format A data.frame with 125 rows and 6 variables:
+#' \describe{
+#'   \item{y}{y-axis of riding bins (corresponds to longitude)}
+#'   \item{x}{x-axis of riding bins (corresponds to latitude)}
+#'   \item{riding_code}{Riding code}
+#'   \item{region}{Region}
+#'   \item{riding_simplified}{Simplified riding name}
+#'   \item{riding_name}{Riding name}
+#' }
+"quebec_riding_bins"
+
+
+#' Quebec provincial riding hexagons (used for hexagonal tile plots)
+#'
+#' @description A data set with coordinates for the \code{mapcan::riding_binplot()} function.
+#'
+#' @format A data.frame with 6629 rows and 15 variables:
+#' \describe{
+#'   \item{long}{y-axis of riding hexagons}
+#'   \item{lat}{x-axis of riding hexagons}
+#'   \item{order}{Order of layers}
+#'   \item{hole}{Polygon hole (TRUE or FALSE)}
+#'   \item{piece}{Piece}
+#'   \item{group}{Group}
+#'   \item{y}{y-axis of riding hexagon center}
+#'   \item{x}{x-axis of riding hexagon center}
+#'   \item{region}{Region}
+#'   \item{riding_simplified}{Simplified riding name}
+#'   \item{riding_name}{Riding name}
+#'   \item{riding_code}{Riding code}
+#' }
+"quebec_riding_hexagons"
+
+#' Canadian federal riding population information
+#'
+#' @description A data set with information on Canadian federal election results, dating back to 1997
+#'
+#' @format A data.frame with 37111 rows and 12 variables:
+#' \describe{
+#'   \item{party}{Winning party in riding}
+#'   \item{riding_code}{Riding code}
+#'   \item{population_2011}{Population of riding in 2011}
+#'   \item{population_2016}{Population of riding in 2016}
+#'}
+#' @source \url{http://www.elections.ca/content.aspx?section=ele&dir=pas&document=index&lang=e},
+#' (under Open Government Licence \url{https://open.canada.ca/en/open-government-licence-canada})
+"riding_info"

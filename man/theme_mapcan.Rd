@@ -7,6 +7,13 @@
 theme_mapcan(legend_position = "bottom", base_size = 12,
   base_family = "")
 }
+\arguments{
+\item{legend_position}{Position of legend, default is "bottom"}
+
+\item{base_size}{Base font size (default is 12)}
+
+\item{base_family}{Base font family}
+}
 \description{
 A ggplot theme that removes unecessary components of map plots. Builds on \code{theme_bw()}.
 }

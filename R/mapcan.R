@@ -13,7 +13,7 @@
 #'
 #'
 #' @examples
-#' mapcan(boundaries = provinces, type = standard, ...)
+#' mapcan(boundaries = census, type = standard)
 #'
 #' @export
 mapcan <- function(boundaries,

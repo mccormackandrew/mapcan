@@ -1,7 +1,7 @@
 Package: mapcan
 Type: Package
-Title: Tools for plotting Canadian choropleth maps and choropleth alternatives.
-Version: 0.1.0
+Title: Tools for Plotting Canadian Choropleth Maps and Choropleth Alternatives
+Version: 0.0.1
 Authors@R: c(
     person("Andrew", "McCormack", email = "mccormack.andy@gmail.com", role = c("aut", "cre")),
     person("Aaron", "Erlich", email = "aaron.erlich@mcgill.ca", role = c("aut")))
@@ -10,13 +10,12 @@ Description: mapcan offers a variety of function that make it easy to plot stand
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 2.10)
 RoxygenNote: 6.1.0
 Imports: 
     dplyr,
-    ggplot2
+    ggplot2,
+    magrittr
 Suggests: 
-    knitr,
-    rmarkdown,
-    dplyr,
-    ggplot2
+    knitr
 VignetteBuilder: knitr

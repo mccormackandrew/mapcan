@@ -5,14 +5,17 @@
 \title{Canadian federal ridings tile plot function}
 \usage{
 riding_binplot(riding_data, riding_col = riding_code, value_col,
-  continuous = TRUE, arrange = FALSE, palette = "Greens",
-  riding_border_col = "white", year = 2015, riding_border_size = 1,
-  provincial = FALSE, province)
+  continuous = TRUE, arrange = FALSE, riding_border_col = "white",
+  year = 2015, riding_border_size = 1, provincial = FALSE,
+  shape = "square", province, legend_name = "default")
 }
 \arguments{
 \item{riding_data}{A dataframe with a continuous or categorical riding-level characteristic and a riding code variable.}
 
-\item{riding_col}{An unquoted character expression specifying the continous or categorical riding level characteristic
+\item{riding_col}{An unquoted character expression specifying the riding code variable from the dataframe
+provided in \code{riding_data}.}
+
+\item{value_col}{An unquoted character expression specifying the column or categorical riding level characteristic
 you would like to visualize.}
 
 \item{continuous}{logical. Specify as \code{FALSE} if the variable is categorical (e.g. for winning party) and \code{TRUE}
@@ -36,9 +39,14 @@ If \code{provincial = TRUE}, specify a 2-letter provincial abbreviation for the 
 Default is \code{FALSE} (i.e. the default is to provide federal electoral boundaries).
 (Note: this argument is still in development, only Quebec provincial boundaries are available at the moment.)}
 
+\item{shape}{Unquoted chacter expression specifying shape of tiles. Options are square and hexagon, default is square.}
+
 \item{province}{An unquoted character expression specifying the 2-letter provincial abbreviation of the province
 for which provincial electoral boundaries are desired. (Note: this argument is still in development, only Quebec provincial
 boundaries are available at the moment.)}
+
+\item{legend_name}{Quoted chacter expression specifying the title of the legend. The variable name will be used as a default
+if no value is supplied.}
 }
 \description{
 A function that returns a data frame with map data, for use in ggplot.
@@ -46,6 +54,7 @@ A function that returns a data frame with map data, for use in ggplot.
 \examples{
 election_2015 <- federal_election_results[federal_election_results$election_year == 2015, ]
 
-riding_binplot(riding_data = election_2015, riding code = riding_code, value_col = party, continuous = TRUE, arrange = TRUE)
+riding_binplot(riding_data = election_2015, riding_col = riding_code,
+value_col = party, continuous = FALSE, arrange = TRUE)
 
 }

@@ -275,13 +275,20 @@ census_divisions_2016$pr_french <- dplyr::recode(census_divisions_2016$pr_sgc_co
                                            `62` = "Nunavut")
 
 census_divisions_2016$census_division_code <- as.numeric(census_divisions_2016$census_code)
+census_divisions_2016$pr_sgc_code <- as.numeric(census_divisions_2016$pr_sgc_code)
+census_divisions_2016$pr_alpha <- as.character(census_divisions_2016$pr_alpha)
+census_divisions_2016$pr_english <- as.character(census_divisions_2016$pr_english)
+census_divisions_2016$pr_french <- as.character(census_divisions_2016$pr_french)
+census_divisions_2016$census_division_name <- as.character(census_divisions_2016$census_division_name)
+census_divisions_2016$census_division_type <- as.character(census_divisions_2016$census_division_type)
+
 census_divisions_2016 <- census_divisions_2016 %>%
   select(-census_code)
 # Save census_divisions_2016 R data object into data/
 use_data(census_divisions_2016)
 
-
-
+build()
+install()
 
 # Quebec provincial ridings 2018 -------------------------------
 

@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 library(mapcan)
-library(tidyverse)
+library(dplyr)
 ```
 
 

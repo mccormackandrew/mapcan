@@ -3,7 +3,9 @@
 #' A function that returns a data frame with map data, for use in ggplot.
 #'
 #' @param riding_data A dataframe with a continuous or categorical riding-level characteristic and a riding code variable.
-#' @param riding_col An unquoted character expression specifying the continous or categorical riding level characteristic
+#' @param riding_col An unquoted character expression specifying the riding code variable from the dataframe
+#' provided in \code{riding_data}.
+#' @param value_col An unquoted character expression specifying the column or categorical riding level characteristic
 #' you would like to visualize.
 #' @param continuous logical. Specify as \code{FALSE} if the variable is categorical (e.g. for winning party) and \code{TRUE}
 #' if the variable is continuous.
@@ -29,11 +31,12 @@
 #' @examples
 #' election_2015 <- federal_election_results[federal_election_results$election_year == 2015, ]
 #'
-#' riding_binplot(riding_data = election_2015, riding code = riding_code, value_col = party, continuous = TRUE, arrange = TRUE)
+#' riding_binplot(riding_data = election_2015, riding_col = riding_code,
+#' value_col = party, continuous = FALSE, arrange = TRUE)
 #'
 #' @export
 riding_binplot <- function(riding_data, riding_col = riding_code, value_col, continuous = TRUE,
-          arrange = FALSE, palette = "Greens", riding_border_col = "white",
+          arrange = FALSE, riding_border_col = "white",
           year = 2015, riding_border_size = 1, provincial = FALSE,
           shape = "square", province, legend_name = "default")
 {
@@ -96,7 +99,7 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
     }
     if (provincial == TRUE) {
       if (province_chr == "QC") {
-        riding_coords <- quebec_riding_bins
+        riding_coords <- mapcan::quebec_riding_bins
       }
       else {
         stop("Province (2-letter code) not valid, or provincial election boundaries for this province not supported yet.")
@@ -116,7 +119,7 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
     gg <- ggplot2::ggplot()
     gg <- gg + ggplot2::scale_y_reverse()
     gg <- gg + ggplot2::geom_tile(data = riding.merged.dat,
-                                  aes_string(x = "y", y = "x", fill = "value.col"),
+                                  ggplot2::aes_string(x = "y", y = "x", fill = "value.col"),
                                   color = riding_border_col, size = riding_border_size)
     if (continuous == T) {
       gg <- gg + ggplot2::scale_fill_viridis_c(name = legend.name)
@@ -152,7 +155,7 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
     }
     if (provincial == TRUE) {
       if (province_chr == "QC") {
-        riding_coords <- quebec_riding_hexagons
+        riding_coords <- mapcan::quebec_riding_hexagons
       }
       else {
         stop("Province (2-letter code) not valid, or provincial election boundaries for this province not supported yet.")
@@ -173,7 +176,7 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
     gg <- ggplot2::ggplot()
     gg <- gg + ggplot2::scale_y_reverse()
     gg <- gg + ggplot2::geom_polygon(data = riding.merged.dat,
-                                     aes_string(x = "long", y = "lat", group = "group",
+                                     ggplot2::aes_string(x = "long", y = "lat", group = "group",
                                                 fill = "value.col"))
     if (continuous == T) {
       gg <- gg + ggplot2::scale_fill_viridis_c(name = legend.name)

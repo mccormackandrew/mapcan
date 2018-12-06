@@ -23,6 +23,6 @@ default is \code{FALSE}}
 A function that returns a data frame with map data, for use in ggplot.
 }
 \examples{
-mapcan(boundaries = provinces, type = standard, ...)
+mapcan(boundaries = census, type = standard)
 
 }
