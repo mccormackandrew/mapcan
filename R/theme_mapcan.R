@@ -1,6 +1,6 @@
 #' Mapcan theme
 #'
-#' A ggplot theme that removes unecessary components of map plots. Builds on \code{theme_bw()}.
+#' A ggplot theme that removes unnecessary components of map plots. Builds on \code{theme_bw()}.
 #'
 #' @param legend_position Position of legend, default is "bottom"
 #' @param base_size Base font size (default is 12)

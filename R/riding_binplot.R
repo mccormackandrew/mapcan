@@ -25,7 +25,7 @@
 #' @param province An unquoted character expression specifying the 2-letter provincial abbreviation of the province
 #' for which provincial electoral boundaries are desired. (Note: this argument is still in development, only Quebec provincial
 #' boundaries are available at the moment.)
-#' @param shape Unquoted chacter expression specifying shape of tiles. Options are square and hexagon, default is square.
+#' @param shape Unquoted character expression specifying shape of tiles. Options are square and hexagon, default is square.
 #' @param legend_name Quoted chacter expression specifying the title of the legend. The variable name will be used as a default
 #' if no value is supplied.
 #' @examples
