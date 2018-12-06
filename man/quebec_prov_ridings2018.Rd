@@ -15,8 +15,8 @@
   \item{group}{Group}
   \item{riding_name}{Riding name (lowercase)}
   \item{riding_name}{Riding name (uppercase)}
-  \item{centroid_long}{Longitude for riding centroids (useful for labelling)}
-  \item{centroid_lat}{Latitude for riding centroids (useful for labelling)}
+  \item{centroid_long}{Longitude for riding centroids (useful for labeling)}
+  \item{centroid_lat}{Latitude for riding centroids (useful for labeling)}
 }}
 \usage{
 quebec_prov_ridings2018

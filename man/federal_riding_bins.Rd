@@ -10,7 +10,7 @@
   \item{x}{x-axis of riding bins (corresponds to latitude)}
   \item{pr_alpha}{Province or territory 2-letter identifier}
   \item{representation_order}{Representation order. Specifies boundaries/number of seats for a given election
-  (e.g. the 2015 election used the 2013 repesentation order, with 338 seats).}
+  (e.g. the 2015 election used the 2013 representation order, with 338 seats).}
   \item{pr_french}{Province or territory name (French).}
   \item{pr_english}{Province or territory name (English).}
   \item{pr_sgc_code}{Province Standard Geographical Classification

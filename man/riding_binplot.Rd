@@ -39,7 +39,7 @@ If \code{provincial = TRUE}, specify a 2-letter provincial abbreviation for the 
 Default is \code{FALSE} (i.e. the default is to provide federal electoral boundaries).
 (Note: this argument is still in development, only Quebec provincial boundaries are available at the moment.)}
 
-\item{shape}{Unquoted chacter expression specifying shape of tiles. Options are square and hexagon, default is square.}
+\item{shape}{Unquoted character expression specifying shape of tiles. Options are square and hexagon, default is square.}
 
 \item{province}{An unquoted character expression specifying the 2-letter provincial abbreviation of the province
 for which provincial electoral boundaries are desired. (Note: this argument is still in development, only Quebec provincial

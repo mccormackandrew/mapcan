@@ -15,5 +15,5 @@ theme_mapcan(legend_position = "bottom", base_size = 12,
 \item{base_family}{Base font family}
 }
 \description{
-A ggplot theme that removes unecessary components of map plots. Builds on \code{theme_bw()}.
+A ggplot theme that removes unnecessary components of map plots. Builds on \code{theme_bw()}.
 }
