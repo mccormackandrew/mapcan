@@ -136,7 +136,7 @@ qc_results$vote_share <- str_extract(qc_string, "\\-*\\d+\\.*\\d*")
 qc_results <- qc_results %>%
   separate(qc_string, c("riding", "b"), ":") %>%
   mutate(candidate = gsub("\\(.*","",b)) %>%
-  select(-b)
+  dplyr::select(-b)
 
 qc_copy <- quebec_prov_ridings2018
 
@@ -158,8 +158,12 @@ qc_results$riding[qc_results$riding == "Sainte-Marie-Sainte-Jacques"] <- "Sainte
 qc_copy <- left_join(qc_results, qc_copy)
 
 qc_copy <- qc_copy %>%
-  select(party, vote_share, candidate, riding_code, riding_name, RIDING_NAME)
+  dplyr::select(party, vote_share, candidate, riding_code, riding_name, RIDING_NAME)
 
 quebec_provincial_results  <- unique(qc_copy[ , 1:6])
+
+# Convert to ASCII
+quebec_provincial_results <- quebec_provincial_results %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
 
 use_data(quebec_provincial_results, overwrite = TRUE)

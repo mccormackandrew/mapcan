@@ -16,8 +16,10 @@ knitr::opts_chunk$set(
   warning = FALSE,
   comment = "#>"
 )
+
 library(mapcan)
 library(dplyr)
+library(ggplot2)
 ```
 
 

@@ -48,7 +48,7 @@ riding_binplot(riding_data = fed2015,
   ggtitle("Tile grid map of 2015 federal election results")
 ```
 
-![](README-unnamed-chunk-3-1.png)
+![](man/figures/README-unnamed-chunk-3-1.png)
 
 Perhaps you are averse to squares. That is ok. Try hexagons instead:
 
@@ -69,7 +69,7 @@ riding_binplot(riding_data = fed2015,
   ggtitle("Hex tile map of 2015 federal election results")
 ```
 
-![](README-unnamed-chunk-4-1.png)
+![](man/figures/README-unnamed-chunk-4-1.png)
 
 Perhaps you are interested in provincial election results, not federal election results. That is also ok. Try plotting the Quebec 2018 provincial election results:
 
@@ -88,18 +88,18 @@ riding_binplot(quebec_provincial_results,
   ggtitle("Hex tile map of 2018 Quebec election results")
 ```
 
-![](README-unnamed-chunk-5-1.png)
+![](man/figures/README-unnamed-chunk-5-1.png)
 
 Standard choropleth maps
 ------------------------
 
 The `mapcan()` function returns geographic coordinate data frames at census division, federal riding, and provincial levels.
 
-![](README-unnamed-chunk-7-1.png)
+![](man/figures/README-unnamed-chunk-7-1.png)
 
 Not interested in the territories? No problem.
 
-![](README-unnamed-chunk-8-1.png)
+![](man/figures/README-unnamed-chunk-8-1.png)
 
 Population cartograms
 ---------------------
@@ -119,7 +119,7 @@ ggplot(census_cartogram_data, aes(long, lat, group = group, fill = population_20
   ggtitle("Population cartogram of census division populations")
 ```
 
-![](README-unnamed-chunk-9-1.png)
+![](man/figures/README-unnamed-chunk-9-1.png)
 
 Let's plot the share of individuals born outside of Canada in each census division as a standard choropleth map then as a population cartogram.
 
@@ -143,7 +143,7 @@ ggplot(census_choropleth_data, aes(long, lat, group = group, fill = born_outside
   ggtitle("Population cartogram of foerign born population by census division")
 ```
 
-![](README-unnamed-chunk-10-1.png)
+![](man/figures/README-unnamed-chunk-10-1.png)
 
 ``` r
 # Get population cartogram geograpic data
@@ -161,6 +161,6 @@ ggplot(census_cartogram_data, aes(long, lat, group = group, fill = born_outside_
   ggtitle("Population cartogram of foerign born population by census division")
 ```
 
-![](README-unnamed-chunk-11-1.png)
+![](man/figures/README-unnamed-chunk-11-1.png)
 
 Comparing these two maps, it is clear that the standard choropleth map visually understates the share of the population that is foreign born in Canada.

@@ -92,6 +92,11 @@ provinces_territories_carto$pr_sgc_code <- dplyr::recode(provinces_territories_c
 provinces_territories_carto <- provinces_territories_carto %>%
   dplyr::select(-year)
 
+# CONVERT TO ASCII
+provinces_territories_carto <- provinces_territories_carto %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
+
+
 # Save data
 use_data(provinces_territories_carto, overwrite = T)
 
@@ -176,8 +181,12 @@ provinces_noterr_carto$pr_sgc_code <- dplyr::recode(provinces_noterr_carto$pr_al
 provinces_noterr_carto <- provinces_noterr_carto %>%
   dplyr::select(-year)
 
+# CONVERT TO ASCII
+provinces_noterr_carto <- provinces_noterr_carto %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
+
 # Save data
-use_data(provinces_noterr_carto, overwrite = T)
+use_data(provinces_noterr_carto, overwrite = TRUE)
 
 
 
@@ -208,56 +217,57 @@ census_divisions_2016_carto <- gBuffer(census_divisions_2016_carto, byid=TRUE, w
 census_divisions_2016_carto <- fortify(census_divisions_2016_carto,
                                           region = "CDUID")
 
+census_divisions_2016_carto$id <- as.numeric(census_divisions_2016_carto$id)
 
 census_divisions_2016_carto <- left_join(census_divisions_2016_carto,
                                             census_pop2016,
                                             by = c("id" = "census_division_code"))
 
+## THESE VARIABLES IMPORTED FROM census_pop2016 IN left_join ABOVE. PROBABLY NOT NECESSARY.
+#census_divisions_2016_carto$pr_alpha <- dplyr::recode(census_divisions_2016_carto$province_sgc_code,
+#                                                `10` = "NL",
+#                                                `11` = "PE",
+#                                                `12` = "NS",
+#                                                `13` = "NB",
+#                                                `24` = "QC",
+#                                                `35` = "ON",
+#                                               `46` = "MB",
+#                                               `47` = "SK",
+#                                               `48` = "AB",
+#                                               `59` = "BC",
+#                                               `60` = "YT",
+#                                               `61` = "NT",
+#                                               `62` = "NU")
 
-census_divisions_2016_carto$pr_alpha <- dplyr::recode(census_divisions_2016_carto$province_sgc_code,
-                                                `10` = "NL",
-                                                `11` = "PE",
-                                                `12` = "NS",
-                                                `13` = "NB",
-                                                `24` = "QC",
-                                                `35` = "ON",
-                                                `46` = "MB",
-                                                `47` = "SK",
-                                                `48` = "AB",
-                                                `59` = "BC",
-                                                `60` = "YT",
-                                                `61` = "NT",
-                                                `62` = "NU")
+#census_divisions_2016_carto$pr_english <- dplyr::recode(census_divisions_2016_carto$province_sgc_code,
+#                                                 `10` = "Newfoundland and Labrador",
+#                                                 `11` = "Prince Edward Island",
+#                                                 `12` = "Nova Scotia",
+#                                                 `13` = "New Brunswick",
+#                                                 `24` = "Quebec",
+#                                                 `35` = "Ontario",
+#                                                 `46` = "Manitoba",
+#                                                 `47` = "Saskatchewan",
+#                                                 `48` = "Alberta",
+#                                                 `59` = "British Columbia",
+#                                                 `60` = "Yukon",
+#                                                 `61` = "Northwest Territories",
+#                                                 `62` = "Nunavut")
 
-census_divisions_2016_carto$pr_english <- dplyr::recode(census_divisions_2016_carto$province_sgc_code,
-                                                  `10` = "Newfoundland and Labrador",
-                                                  `11` = "Prince Edward Island",
-                                                  `12` = "Nova Scotia",
-                                                  `13` = "New Brunswick",
-                                                  `24` = "Quebec",
-                                                  `35` = "Ontario",
-                                                  `46` = "Manitoba",
-                                                  `47` = "Saskatchewan",
-                                                  `48` = "Alberta",
-                                                  `59` = "British Columbia",
-                                                  `60` = "Yukon",
-                                                  `61` = "Northwest Territories",
-                                                  `62` = "Nunavut")
-
-census_divisions_2016_carto$pr_french <- dplyr::recode(census_divisions_2016_carto$province_sgc_code,
-                                                 `10` = "Terre-Neuve-et-Labrador",
-                                                 `11` = "Île-du-Prince-Édouard",
-                                                 `12` = "Nouvelle-Écosse",
-                                                 `13` = "Nouveau-Brunswick",
-                                                 `24` = "Québec",
-                                                 `35` = "Ontario",
-                                                 `46` = "Manitoba",
-                                                 `47` = "Saskatchewan",
-                                                 `48` = "Alberta",
-                                                 `59` = "Colombie-Britannique",
-                                                 `60` = "Yukon",
-                                                 `61` = "Territoires du Nord-Ouest",
-                                                 `62` = "Nunavut")
+#census_divisions_2016_carto$pr_french <- dplyr::recode(census_divisions_2016_carto$province_sgc_code,
+#                                                `10` = "Terre-Neuve-et-Labrador",
+#                                                `11` = "Île-du-Prince-Édouard",
+#                                                `12` = "Nouvelle-Écosse",
+#                                                `13` = "Nouveau-Brunswick",
+#                                                `24` = "Québec",
+#                                                `35` = "Ontario",
+#                                                `46` = "Manitoba",
+#                                                `47` = "Saskatchewan",
+#                                                `48` = "Alberta",
+#                                                `59` = "Colombie-Britannique",
+#                                                `60` = "Yukon",
+#                                                `61` = "Territoires du Nord-Ouest",
+#                                                `62` = "Nunavut")
 
 census_divisions_2016_carto <- census_divisions_2016_carto %>%
   mutate(census_code = id) %>%
@@ -266,10 +276,14 @@ census_divisions_2016_carto <- census_divisions_2016_carto %>%
 census_divisions_2016_carto$census_division_code <- as.numeric(census_divisions_2016_carto$census_code)
 
 census_divisions_2016_carto <- census_divisions_2016_carto %>%
-  select(-census_code)
+  dplyr::select(-census_code)
+
+# CONVERT TO ASCII
+census_divisions_2016_carto <- census_divisions_2016_carto %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
 
 # Save data
-use_data(census_divisions_2016_carto)
+use_data(census_divisions_2016_carto, overwrite = TRUE)
 
 ## Make census divisions (no terroritories) cartogram--------------------
 
@@ -297,65 +311,23 @@ census_divisions_2016_noterr_carto <- gBuffer(census_divisions_2016_noterr_carto
 census_divisions_2016_noterr_carto <- fortify(census_divisions_2016_noterr_carto,
                                           region = "CDUID")
 
-
+census_divisions_2016_noterr_carto$id <- as.numeric(census_divisions_2016_noterr_carto$id)
 census_divisions_2016_noterr_carto <- left_join(census_divisions_2016_noterr_carto,
                                             census_pop2016,
                                             by = c("id" = "census_division_code"))
 
-census_divisions_2016_noterr_carto$pr_alpha <- dplyr::recode(census_divisions_2016_noterr_carto$pr_sgc_code,
-                                                      `10` = "NL",
-                                                      `11` = "PE",
-                                                      `12` = "NS",
-                                                      `13` = "NB",
-                                                      `24` = "QC",
-                                                      `35` = "ON",
-                                                      `46` = "MB",
-                                                      `47` = "SK",
-                                                      `48` = "AB",
-                                                      `59` = "BC",
-                                                      `60` = "YT",
-                                                      `61` = "NT",
-                                                      `62` = "NU")
 
-census_divisions_2016_noterr_carto$pr_english <- dplyr::recode(census_divisions_2016_noterr_carto$pr_sgc_code,
-                                                        `10` = "Newfoundland and Labrador",
-                                                        `11` = "Prince Edward Island",
-                                                        `12` = "Nova Scotia",
-                                                        `13` = "New Brunswick",
-                                                        `24` = "Quebec",
-                                                        `35` = "Ontario",
-                                                        `46` = "Manitoba",
-                                                        `47` = "Saskatchewan",
-                                                        `48` = "Alberta",
-                                                        `59` = "British Columbia",
-                                                        `60` = "Yukon",
-                                                        `61` = "Northwest Territories",
-                                                        `62` = "Nunavut")
-
-census_divisions_2016_noterr_carto$pr_french <- dplyr::recode(census_divisions_2016_noterr_carto$pr_sgc_code,
-                                                       `10` = "Terre-Neuve-et-Labrador",
-                                                       `11` = "Île-du-Prince-Édouard",
-                                                       `12` = "Nouvelle-Écosse",
-                                                       `13` = "Nouveau-Brunswick",
-                                                       `24` = "Québec",
-                                                       `35` = "Ontario",
-                                                       `46` = "Manitoba",
-                                                       `47` = "Saskatchewan",
-                                                       `48` = "Alberta",
-                                                       `59` = "Colombie-Britannique",
-                                                       `60` = "Yukon",
-                                                       `61` = "Territoires du Nord-Ouest",
-                                                       `62` = "Nunavut")
 
 census_divisions_2016_noterr_carto <- census_divisions_2016_noterr_carto %>%
   mutate(census_code = id) %>%
   dplyr::select(-id)
 
+# CONVERT TO ASCII
+census_divisions_2016_noterr_carto <- census_divisions_2016_noterr_carto %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
+
 # Save data
-use_data(census_divisions_2016_noterr_carto)
-
-
-
+use_data(census_divisions_2016_noterr_carto, overwrite = T)
 
 
 

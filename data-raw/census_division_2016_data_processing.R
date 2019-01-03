@@ -69,9 +69,8 @@ census_pop2016 <- inner_join(census_pop2016, census_divisions_immigrants, by = "
   select(-c(census_division_name.x, census_division_name.y)) %>%
   mutate(born_outside_canada_share = born_outside_canada/population_2016)
 
-census_pop2016 %>%
-  arrange(desc(born_outside_canada_share))
-
-census_pop2016 %>% filter(population_2016 > 10000000)
+# Convert to ASCII
+census_pop2016 <- census_pop2016 %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
 
 use_data(census_pop2016, overwrite = TRUE)

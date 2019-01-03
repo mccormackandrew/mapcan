@@ -23,9 +23,17 @@ provinces_territories <- sp::spTransform(provinces_territories,
 # Use zero-width buffer to clean up topology problems
 provinces_territories <- rgeos::gBuffer(provinces_territories, byid=TRUE, width=0)
 
+# CONVERT TO ASCII
+provinces_territories@data <- provinces_territories@data %>%
+  mutate_if(is.factor, stringi::stri_enc_toascii) %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
+
 # Save spdf
 provinces_territories_spdf <- provinces_territories
-use_data(provinces_territories_spdf)
+
+# Don't save in data, save in data-raw because these files are unecessary for functioning of package
+save(provinces_territories_spdf, file = "data-raw/simplified_shapefiles/provinces_territories_spdf.rda")
+#use_data(provinces_territories_spdf, overwrite = TRUE)
 
 # Save data to merge
 provinces_territories_data <- provinces_territories@data
@@ -61,13 +69,18 @@ provinces_territories$pr_alpha <- dplyr::recode(provinces_territories$pr_sgc_cod
 
 
 provinces_territories$pr_sgc_code <- as.numeric(provinces_territories$pr_sgc_code)
-str(provinces_territories)
-# Save R data object into data/
-use_data(provinces_territories)
 
+# CONVERT TO ASCII
+provinces_territories <- provinces_territories %>%
+  mutate_if(is.factor, stringi::stri_enc_toascii) %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
 
+provinces_territories$pr_sgc_code <- as.numeric(provinces_territories$pr_sgc_code)
+provinces_territories$piece <- as.numeric(provinces_territories$piece)
+provinces_territories$group <- as.numeric(provinces_territories$group)
 
-
+# Save R data object into data
+use_data(provinces_territories, overwrite = T)
 
 
 # Federal ridings ----------------------------------------
@@ -86,10 +99,17 @@ federal_ridings <- sp::spTransform(federal_ridings,
 # Use zero-width buffer to clean up topology problems
 federal_ridings <- rgeos::gBuffer(federal_ridings, byid=TRUE, width=0)
 
+# CONVERT TO ASCII
+federal_ridings@data <- federal_ridings@data %>%
+  mutate_if(is.factor, stringi::stri_enc_toascii) %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
+
 # Save spdf
 federal_ridings_spdf <- federal_ridings
 
-use_data(federal_ridings_spdf)
+# Don't save in data, save in data-raw because these files are unecessary for functioning of package
+save(federal_ridings_spdf, file = "data-raw/simplified_shapefiles/federal_ridings_spdf.rda")
+# use_data(federal_ridings_spdf, overwrite = TRUE)
 
 # Save data to merge
 federal_ridings_data <- federal_ridings@data
@@ -186,6 +206,17 @@ federal_ridings <- left_join(federal_ridings, fed_riding_labels)
 federal_ridings$centroid_long[duplicated(federal_ridings$centroid_long)] <- NA
 federal_ridings$centroid_lat[duplicated(federal_ridings$centroid_lat)] <- NA
 
+
+# CONVERT TO ASCII
+federal_ridings <- federal_ridings %>%
+  mutate_if(is.factor, stringi::stri_enc_toascii) %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
+
+federal_ridings$riding_code <- as.numeric(federal_ridings$riding_code)
+federal_ridings$pr_sgc_code <- as.numeric(federal_ridings$pr_sgc_code)
+federal_ridings$piece <- as.numeric(federal_ridings$piece)
+federal_ridings$group <- as.numeric(federal_ridings$group)
+
 # Save federal_ridings R data object into data/
 use_data(federal_ridings, overwrite = T)
 
@@ -200,8 +231,6 @@ census_divisions_2016 <- rgdal::readOGR("data-raw/shapefile_data/census_division
 # Shapefile is unnecessarily large for creating plots, make smaller
 census_divisions_2016 <- rmapshaper::ms_simplify(census_divisions_2016, keep = 0.01, keep_shapes = T)
 
-census_divisions_2016_backup <- census_divisions_2016
-
 # Add projection
 census_divisions_2016 <- sp::spTransform(census_divisions_2016,
                                      CRS("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"))
@@ -209,9 +238,17 @@ census_divisions_2016 <- sp::spTransform(census_divisions_2016,
 # Use zero-width buffer to clean up topology problems
 census_divisions_2016 <- rgeos::gBuffer(census_divisions_2016, byid=TRUE, width=0)
 
+# CONVERT TO ASCII
+census_divisions_2016@data <- census_divisions_2016@data %>%
+  mutate_if(is.factor, stringi::stri_enc_toascii) %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
+
 # Save spdf
 census_divisions_2016_spdf <- census_divisions_2016
-use_data(census_divisions_2016_spdf)
+
+# Don't save in data, save in data-raw because these files are unecessary for functioning of package
+save(census_divisions_2016_spdf, file = "data-raw/simplified_shapefiles/census_divisions_2016_spdf.rda")
+#use_data(census_divisions_2016_spdf, overwrite = TRUE)
 
 # Save data to merge
 census_divisions_2016_data <- census_divisions_2016@data
@@ -283,12 +320,17 @@ census_divisions_2016$census_division_name <- as.character(census_divisions_2016
 census_divisions_2016$census_division_type <- as.character(census_divisions_2016$census_division_type)
 
 census_divisions_2016 <- census_divisions_2016 %>%
-  select(-census_code)
-# Save census_divisions_2016 R data object into data/
-use_data(census_divisions_2016)
+  dplyr::select(-census_code)
 
-build()
-install()
+# CONVERT TO ASCII
+census_divisions_2016 <- census_divisions_2016 %>%
+  mutate_if(is.factor, stringi::stri_enc_toascii) %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
+
+# Save census_divisions_2016 R data object into data/
+use_data(census_divisions_2016, overwrite = TRUE)
+
+
 
 # Quebec provincial ridings 2018 -------------------------------
 
@@ -305,10 +347,17 @@ quebec_prov_ridings2018 <- sp::spTransform(quebec_prov_ridings2018,
 # Use zero-width buffer to clean up topology problems
 quebec_prov_ridings2018 <- rgeos::gBuffer(quebec_prov_ridings2018, byid=TRUE, width=0)
 
+# CONVERT TO ASCII
+quebec_prov_ridings2018@data <- quebec_prov_ridings2018@data %>%
+  mutate_if(is.factor, stringi::stri_enc_toascii) %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
+
 # Save spdf
 quebec_prov_ridings2018_spdf <- quebec_prov_ridings2018
 
-use_data(quebec_prov_ridings2018_spdf, overwrite = TRUE)
+# Don't save in data, save in data-raw because these files are unecessary for functioning of package
+save(quebec_prov_ridings2018_spdf, file = "data-raw/simplified_shapefiles/quebec_prov_ridings2018_spdf.rda")
+#use_data(quebec_prov_ridings2018_spdf, overwrite = TRUE)
 
 # Save data to merge
 quebec_prov_ridings2018_data <- quebec_prov_ridings2018@data %>%
@@ -353,5 +402,5 @@ quebec_prov_ridings2018$centroid_long[duplicated(quebec_prov_ridings2018$centroi
 quebec_prov_ridings2018$centroid_lat[duplicated(quebec_prov_ridings2018$centroid_lat)] <- NA
 
 # Save federal_ridings R data object into data/
-use_data(quebec_prov_ridings2018)
+use_data(quebec_prov_ridings2018, overwrite = TRUE)
 

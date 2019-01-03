@@ -246,5 +246,10 @@ federal_election_results <- federal_election_results %>%
 federal_election_results$riding_code <- gsub("ED", "", federal_election_results$riding_code) %>%
   gsub("-", "", .)
 
+federal_election_results$riding_code <- as.numeric(federal_election_results$riding_code)
+
+federal_election_results <- federal_election_results %>%
+  mutate_if(is.character, stringi::stri_enc_toascii)
+
 use_data(federal_election_results, overwrite = T)
 
