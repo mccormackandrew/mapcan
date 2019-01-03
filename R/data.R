@@ -20,15 +20,6 @@
 #' (under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
 "provinces_territories"
 
-#' Province/territories SpatialPointsDataFrame
-#'
-#' @description A SpatialPointsDataFrame object (geographic coordinates and data) of provincial and territorial boundaries,
-#' used to create the \code{provinces_territories} data frame.
-#' @format SpatialPointsDataFrame object.
-#' @source \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm},
-#' (under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
-"provinces_territories_spdf"
-
 #' Provinces and territories cartogram data (territories included)
 #'
 #' @description A data set with geographic information for Canadian provinces and territories, boundary divisions
@@ -105,15 +96,6 @@
 #' (under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
 "federal_ridings"
 
-#' Federal ridings SpatialPointsDataFrame
-#'
-#' @description A SpatialPointsDataFrame object (geographic coordinates and data) of federal riding boundaries,
-#' used to create the \code{federal_ridings} data frame.
-#' @format SpatialPointsDataFrame object.
-#' @source \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm},
-#' (under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
-"federal_ridings_spdf"
-
 #' Census divisions (2016)
 #'
 #' @description A data set with geographic information for Canadian census divisions
@@ -140,15 +122,6 @@
 #' @source \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm}
 #' (under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
 "census_divisions_2016"
-
-#' Census divisions SpatialPointsDataFrame
-#'
-#' @description A SpatialPointsDataFrame object (geographic coordinates and data) of census division boundaries,
-#' used to create the \code{census_divisions_2016} data frame.
-#' @format SpatialPointsDataFrame object.
-#' @source \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm},
-#' (under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
-"census_divisions_2016_spdf"
 
 #' Census divisions cartogram data frame (territories excluded)  (2016)
 #'
@@ -343,16 +316,6 @@
 #'   \item{centroid_lat}{Latitude for riding centroids (useful for labeling)}
 #' }
 "quebec_prov_ridings2018"
-
-#' Quebec provincial ridings SpatialPointsDataFrame
-#'
-#' @description A SpatialPointsDataFrame object (geographic coordinates and data) of 2018 Quebec provincial election
-#' riding boundaries, used to create the \code{quebec_prov_ridings2018} data frame.
-#'
-#' @format SpatialPointsDataFrame object.
-#' @source \url{https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm},
-#' (under Statistics Canada Open Licence \url{https://www.statcan.gc.ca/eng/reference/licence})
-"quebec_prov_ridings2018_spdf"
 
 #' Quebec provincial election results data
 #'
