@@ -1,7 +1,7 @@
 Package: mapcan
 Type: Package
 Title: Tools for Plotting Canadian Choropleth Maps and Choropleth Alternatives
-Version: 0.0.1
+Version: 0.0.0.9000
 Authors@R: c(
     person("Andrew", "McCormack", email = "mccormack.andy@gmail.com", role = c("aut", "cre")),
     person("Aaron", "Erlich", email = "aaron.erlich@mcgill.ca", role = c("aut")))
