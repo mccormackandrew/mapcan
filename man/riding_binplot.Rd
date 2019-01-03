@@ -45,7 +45,7 @@ Default is \code{FALSE} (i.e. the default is to provide federal electoral bounda
 for which provincial electoral boundaries are desired. (Note: this argument is still in development, only Quebec provincial
 boundaries are available at the moment.)}
 
-\item{legend_name}{Quoted character expression specifying the title of the legend. The variable name will be used as a default
+\item{legend_name}{Quoted chacter expression specifying the title of the legend. The variable name will be used as a default
 if no value is supplied.}
 }
 \description{
