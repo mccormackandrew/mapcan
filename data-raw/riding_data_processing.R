@@ -21,7 +21,7 @@ election1997_2000 <- election1997_2000 %>%
   mutate(election_year = case_when(event_english_name == "Thirty-sixth General Election 1997" ~ 1997,
                                    event_english_name == "Thirty-seventh general election 2000" ~ 2000)) %>%
   dplyr::select(-event_english_name, -event_french_name)
-election1997_2000$ed_english_name
+
 election1997_2000 <- election1997_2000 %>%
   mutate(candidate = paste0(election1997_2000$elected_last_name, ", ",
                             election1997_2000$elected_first_name, " ",
@@ -144,7 +144,8 @@ for(i in 1:nrow(elections_2004_2015)) {
 
 elections_2004_2015$candidate <- gsub("Conservative/conservateur|Conservative/Conservateur|Liberal/Libéral|N.D.P./N.P.D.|
      |Bloc Québécois/Bloc Québécois|No Affiliation/Aucune appartenance|Independent/Indépendant|
-     |NDP-New Democratic Party/NPD-Nouveau Parti démocratique", "", elections_2004_2015$candidate)
+     |NDP-New Democratic Party/NPD-Nouveau Parti démocratique|NDP-New Democratic Party/NPD-Nouveau Parti dÃ©mocratique|
+     |Green Party/Parti Vert|Liberal/LibÃ©ral|Bloc QuÃ©bÃ©cois/Bloc QuÃ©bÃ©cois", "", elections_2004_2015$candidate)
 
 elections_2004_2015$candidate <- trimws(elections_2004_2015$candidate)
 
@@ -182,7 +183,6 @@ elections_2004_2015$province[elections_2004_2015$province %in%
 # Merging all the elections together -----------------------------------
 
 federal_election_results <- rbind(election1997_2000, elections_2004_2015)
-
 
 
 # Add additional province identifiers -----------------------------------
@@ -252,4 +252,3 @@ federal_election_results <- federal_election_results %>%
   mutate_if(is.character, stringi::stri_enc_toascii)
 
 use_data(federal_election_results, overwrite = T)
-

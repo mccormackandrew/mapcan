@@ -109,10 +109,10 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
                                      by = "riding_code", all.y = TRUE, sort = TRUE)
     riding.merged.dat$riding_code <- as.numeric(riding.merged.dat$riding_code)
     if (arrange == TRUE) {
-      riding.merged.dat.arranged_a <- riding.merged.dat %>%
-        dplyr::arrange(pr_alpha, value.col) %>% dplyr::select(value.col)
-      riding.merged.dat.arranged_b <- dplyr::select(riding.merged.dat,
-                                                    -value.col) %>% dplyr::arrange(pr_alpha, riding_code)
+      riding.merged.dat.arranged_a <- dplyr::arrange(riding.merged.dat, pr_alpha, value.col)
+      riding.merged.dat.arranged_a <- dplyr::select(riding.merged.dat.arranged_a, value.col)
+      riding.merged.dat.arranged_b <- dplyr::select(riding.merged.dat, -value.col)
+      riding.merged.dat.arranged_b <- dplyr::arrange(riding.merged.dat.arranged_b, pr_alpha, riding_code)
       riding.merged.dat <- cbind(riding.merged.dat.arranged_a,
                                  riding.merged.dat.arranged_b)
     }
@@ -130,9 +130,6 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
     gg <- gg + ggplot2::coord_equal()
     gg <- gg + ggplot2::labs(x = NULL, y = NULL)
   }
-
-
-
 
   # HEXAGONAL TILE PLOTS
   if (shape_chr == "hexagon") {
@@ -166,10 +163,10 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
     riding.merged.dat <- dplyr::inner_join(riding_coords, riding.df)
     riding.merged.dat$riding_code <- as.numeric(riding.merged.dat$riding_code)
     if (arrange == TRUE) {
-      riding.merged.dat.arranged_a <- riding.merged.dat %>%
-        dplyr::arrange(pr_alpha, value.col) %>% dplyr::select(value.col)
-      riding.merged.dat.arranged_b <- dplyr::select(riding.merged.dat,
-                                                    -value.col) %>% dplyr::arrange(pr_alpha, riding_code)
+      riding.merged.dat.arranged_a <- dplyr::arrange(riding.merged.dat, pr_alpha, value.col)
+      riding.merged.dat.arranged_a <- dplyr::select(riding.merged.dat.arranged_a, value.col)
+      riding.merged.dat.arranged_b <- dplyr::select(riding.merged.dat, -value.col)
+      riding.merged.dat.arranged_b <- dplyr::arrange(riding.merged.dat.arranged_b, pr_alpha, riding_code)
       riding.merged.dat <- cbind(riding.merged.dat.arranged_a,
                                  riding.merged.dat.arranged_b)
     }

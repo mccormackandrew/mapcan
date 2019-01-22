@@ -20,6 +20,7 @@ provinces_territories <- rmapshaper::ms_simplify(provinces_territories, keep = 0
 provinces_territories <- sp::spTransform(provinces_territories,
                                      CRS("+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"))
 
+
 # Use zero-width buffer to clean up topology problems
 provinces_territories <- rgeos::gBuffer(provinces_territories, byid=TRUE, width=0)
 
@@ -51,7 +52,6 @@ names(provinces_territories) <- c("long", "lat", "order", "hole",
                                   "piece", "pr_sgc_code", "group",
                                   "pr_english", "pr_french")
 
-
 provinces_territories$pr_alpha <- dplyr::recode(provinces_territories$pr_sgc_code,
        `10` = "NL",
        `11` = "PE",
@@ -75,9 +75,8 @@ provinces_territories <- provinces_territories %>%
   mutate_if(is.factor, stringi::stri_enc_toascii) %>%
   mutate_if(is.character, stringi::stri_enc_toascii)
 
+
 provinces_territories$pr_sgc_code <- as.numeric(provinces_territories$pr_sgc_code)
-provinces_territories$piece <- as.numeric(provinces_territories$piece)
-provinces_territories$group <- as.numeric(provinces_territories$group)
 
 # Save R data object into data
 use_data(provinces_territories, overwrite = T)
@@ -214,8 +213,7 @@ federal_ridings <- federal_ridings %>%
 
 federal_ridings$riding_code <- as.numeric(federal_ridings$riding_code)
 federal_ridings$pr_sgc_code <- as.numeric(federal_ridings$pr_sgc_code)
-federal_ridings$piece <- as.numeric(federal_ridings$piece)
-federal_ridings$group <- as.numeric(federal_ridings$group)
+
 
 # Save federal_ridings R data object into data/
 use_data(federal_ridings, overwrite = T)
