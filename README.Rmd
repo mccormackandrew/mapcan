@@ -101,10 +101,6 @@ riding_binplot(quebec_provincial_results,
   
 ```
 
-```{r include = FALSE, echo = FALSE}
-paletteer::palettes_d_names
-paletteer::paletteer_d("ggsci", "category10_d3")
-```
 
 ## Standard choropleth maps
 

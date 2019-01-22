@@ -95,11 +95,11 @@ Standard choropleth maps
 
 The `mapcan()` function returns geographic coordinate data frames at census division, federal riding, and provincial levels.
 
-![](man/figures/README-unnamed-chunk-7-1.png)
+![](man/figures/README-unnamed-chunk-6-1.png)
 
 Not interested in the territories? No problem.
 
-![](man/figures/README-unnamed-chunk-8-1.png)
+![](man/figures/README-unnamed-chunk-7-1.png)
 
 Population cartograms
 ---------------------
@@ -119,7 +119,7 @@ ggplot(census_cartogram_data, aes(long, lat, group = group, fill = population_20
   ggtitle("Population cartogram of census division populations")
 ```
 
-![](man/figures/README-unnamed-chunk-9-1.png)
+![](man/figures/README-unnamed-chunk-8-1.png)
 
 Let's plot the share of individuals born outside of Canada in each census division as a standard choropleth map then as a population cartogram.
 
@@ -143,7 +143,7 @@ ggplot(census_choropleth_data, aes(long, lat, group = group, fill = born_outside
   ggtitle("Population cartogram of foerign born population by census division")
 ```
 
-![](man/figures/README-unnamed-chunk-10-1.png)
+![](man/figures/README-unnamed-chunk-9-1.png)
 
 ``` r
 # Get population cartogram geograpic data
@@ -161,6 +161,6 @@ ggplot(census_cartogram_data, aes(long, lat, group = group, fill = born_outside_
   ggtitle("Population cartogram of foerign born population by census division")
 ```
 
-![](man/figures/README-unnamed-chunk-11-1.png)
+![](man/figures/README-unnamed-chunk-10-1.png)
 
 Comparing these two maps, it is clear that the standard choropleth map visually understates the share of the population that is foreign born in Canada.

@@ -1,5 +1,7 @@
 # Because it is hard to find dataset on 2018 results, I use the list that CTV published after the election
 # https://montreal.ctvnews.ca/quebec-2018-election-final-results-and-winners-by-riding-1.4117466
+library(tidyverse)
+library(mapcan)
 
 qc_string <- c("Abitibi-Est: Pierre Dufour (CAQ) 42.2%",
                "Abitibi-Ouest: Suzanne Blais (CAQ) 34.1%",
@@ -129,41 +131,60 @@ qc_string <- c("Abitibi-Est: Pierre Dufour (CAQ) 42.2%",
 
 qc_results <- data.frame(qc_string)
 
+# Extract party name
 qc_results$party <- gsub("[\\(\\)]", "", regmatches(qc_string, gregexpr("\\(.*?\\)", qc_string)))
 
+# Extract vote share
 qc_results$vote_share <- str_extract(qc_string, "\\-*\\d+\\.*\\d*")
 
+# Extract riding name
 qc_results <- qc_results %>%
-  separate(qc_string, c("riding", "b"), ":") %>%
+  separate(qc_string, c("riding_name", "b"), ":") %>%
   mutate(candidate = gsub("\\(.*","",b)) %>%
   dplyr::select(-b)
 
-qc_copy <- quebec_prov_ridings2018
 
-ridings1 <- gsub("`|\\'", "", iconv(qc_copy$riding_name, to="ASCII//TRANSLIT")) %>%
-  gsub('[\\^]', '', .) %>%
-  unique()
+## Bring in data from quebec_riding_bins so we have riding codes
+qc_copy <- mapcan::quebec_riding_bins %>%
+  dplyr::select(riding_code, region, riding_simplified, riding_name)
 
-qc_copy$riding <- gsub("`|\\'", "", iconv(qc_copy$riding_name, to="ASCII//TRANSLIT")) %>%
+# Change riding code back to numeric
+qc_copy$riding_code <- as.numeric(qc_copy$riding_code)
+
+## Rename riding names so merging is possible
+qc_results$riding_name[qc_results$riding_name == "Arthabasca"] <- "Arthabaska"
+qc_results$riding_name[qc_results$riding_name == "D’Arcy McGee"] <- "DArcy-McGee"
+qc_results$riding_name[qc_results$riding_name == "Gaspé"] <- "Gaspe"
+qc_results$riding_name[qc_results$riding_name == "Laviolette Saint-Maurice"] <- "Laviolette-Saint-Maurice"
+qc_results$riding_name[qc_results$riding_name == "Rouyn-Noranda-Temiscaminque"] <- "Rouyn-Noranda-Temiscamingue"
+qc_results$riding_name[qc_results$riding_name == "Sainte-Marie-Sainte-Jacques"] <- "Sainte-Marie-Saint-Jacques"
+
+
+# Remove accents from riding_name
+qc_copy$riding_name <- gsub("`|\\'", "", iconv(qc_copy$riding_name, to="ASCII//TRANSLIT")) %>%
   gsub('[\\^]', '', .)
 
-qc_results$riding[qc_results$riding == "Arthabasca"] <- "Arthabaska"
-qc_results$riding[qc_results$riding == "D’Arcy McGee"] <- "DArcy-McGee"
-qc_results$riding[qc_results$riding == "Gaspé"] <- "Gaspe"
-qc_results$riding[qc_results$riding == "L’Assomption"] <- "LAssomption"
-qc_results$riding[qc_results$riding == "Laviolette Saint-Maurice"] <- "Laviolette-Saint-Maurice"
-qc_results$riding[qc_results$riding == "Rouyn-Noranda-Temiscaminque"] <- "Rouyn-Noranda-Temiscamingue"
-qc_results$riding[qc_results$riding == "Sainte-Marie-Sainte-Jacques"] <- "Sainte-Marie-Saint-Jacques"
+# Fill in missing row for lassomption
+qc_copy[qc_copy$riding_code == 544, ] <- c(544, "Montréal", "lassomption", "L’Assomption")
 
-qc_copy <- left_join(qc_results, qc_copy)
+# Merge riding data and winning party of riding data
+qc_copy <- left_join(qc_results, qc_copy, by = "riding_name")
 
 qc_copy <- qc_copy %>%
-  dplyr::select(party, vote_share, candidate, riding_code, riding_name, RIDING_NAME)
+  dplyr::select(party, vote_share, candidate, riding_code, riding_name, region)
 
-quebec_provincial_results  <- unique(qc_copy[ , 1:6])
+qc_copy$riding_code <- as.numeric(qc_copy$riding_code)
 
-# Convert to ASCII
-quebec_provincial_results <- quebec_provincial_results %>%
-  mutate_if(is.character, stringi::stri_enc_toascii)
+# Remove accents
+qc_copy$riding_name <- gsub("`|\\'", "", iconv(qc_copy$riding_name, to="ASCII//TRANSLIT")) %>%
+  gsub('[\\^]', '', .)
+
+qc_copy$region <- gsub("`|\\'", "", iconv(qc_copy$region, to="ASCII//TRANSLIT")) %>%
+  gsub('[\\^]', '', .)
+
+qc_copy$candidate <- gsub("`|\\'", "", iconv(qc_copy$candidate, to="ASCII//TRANSLIT")) %>%
+  gsub('[\\^]', '', .)
+
+quebec_provincial_results <- qc_copy
 
 use_data(quebec_provincial_results, overwrite = TRUE)
