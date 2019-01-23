@@ -16,7 +16,7 @@ census_pop2016 <- census_pop2016 %>% dplyr::select("Geographic.code",
                                                    "Land.area.in.square.kilometres..2016",
                                                    "Population..2011")
 
-names(census_pop2016) <- c("census_division_code",
+names(census_pop2016) <- c("census_code",
                            "census_division_name",
                            "census_division_type",
                            "pr_sgc_code",
@@ -59,12 +59,12 @@ census_pop2016$pr_alpha <- dplyr::recode(census_pop2016$pr_sgc_code,
                                           `61` = "NT",
                                           `62` = "NU")
 
-census_pop2016$census_division_code <- as.numeric(census_pop2016$census_division_code)
+census_pop2016$census_code <- as.numeric(census_pop2016$census_code)
 
 # Load in born outside Canada data
 load(file = "data-raw/riding_characteristics/census_divisions_immigrants.Rdata")
-
-census_pop2016 <- inner_join(census_pop2016, census_divisions_immigrants, by = "census_division_code") %>%
+census_divisions_immigrants
+census_pop2016 <- inner_join(census_pop2016, census_divisions_immigrants, by = c("census_code" = "census_division_code")) %>%
   mutate(census_division_name = census_division_name.y) %>%
   select(-c(census_division_name.x, census_division_name.y)) %>%
   mutate(born_outside_canada_share = born_outside_canada/population_2016)
@@ -73,4 +73,4 @@ census_pop2016 <- inner_join(census_pop2016, census_divisions_immigrants, by = "
 census_pop2016 <- census_pop2016 %>%
   mutate_if(is.character, stringi::stri_enc_toascii)
 
-use_data(census_pop2016, overwrite = TRUE)
+usethis::use_data(census_pop2016, overwrite = TRUE)
