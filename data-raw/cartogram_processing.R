@@ -1,10 +1,12 @@
+# Paths may have changed, when spdfs were moved to data-raw
+
 ## First run shapefile_processing.R, these cartograms will work with the
 ## compressed shapefiles created in that script
 
 ## To install Rcartogram and getcartr ----------------------
 # First `brew install fftw` in command line, then:
-# devtools::install_github("omegahat/Rcartogram")
-# devtools::install_github('chrisbrunsdon/getcartr',subdir='getcartr')
+devtools::install_github("omegahat/Rcartogram")
+devtools::install_github('chrisbrunsdon/getcartr',subdir='getcartr')
 
 library(pacman)
 p_load(tidyverse, rgdal, rgeos, rmapshaper,
@@ -194,7 +196,7 @@ use_data(provinces_noterr_carto, overwrite = TRUE)
 ## Make census divisions cartogram--------------------
 
 # Import map data
-load("data/census_divisions_2016_spdf.rda")
+load("data-raw/simplified_shapefiles/census_divisions_2016_spdf.rda")
 load("data/census_pop2016.rda")
 
 # Merge in riding population and election data
@@ -273,14 +275,17 @@ census_divisions_2016_carto <- census_divisions_2016_carto %>%
   mutate(census_code = id) %>%
   dplyr::select(-id)
 
-census_divisions_2016_carto$census_division_code <- as.numeric(census_divisions_2016_carto$census_code)
+census_divisions_2016_carto$census_code <- as.numeric(census_divisions_2016_carto$census_code)
 
-census_divisions_2016_carto <- census_divisions_2016_carto %>%
-  dplyr::select(-census_code)
 
 # CONVERT TO ASCII
 census_divisions_2016_carto <- census_divisions_2016_carto %>%
   mutate_if(is.character, stringi::stri_enc_toascii)
+
+
+# Reduce number of variables
+census_divisions_2016_carto <- census_divisions_2016_carto %>%
+  dplyr::select(long, lat, order, hole, piece, group, census_code, census_division_name, census_division_type, pr_sgc_code, pr_alpha, pr_english, pr_french)
 
 # Save data
 use_data(census_divisions_2016_carto, overwrite = TRUE)
@@ -326,8 +331,18 @@ census_divisions_2016_noterr_carto <- census_divisions_2016_noterr_carto %>%
 census_divisions_2016_noterr_carto <- census_divisions_2016_noterr_carto %>%
   mutate_if(is.character, stringi::stri_enc_toascii)
 
+# REduce number of variables
+census_divisions_2016_noterr_carto <- census_divisions_2016_noterr_carto %>%
+  dplyr::select(long, lat, order, hole, piece, group, census_code, census_division_name, census_division_type, pr_sgc_code, pr_alpha, pr_english, pr_french)
+
 # Save data
 use_data(census_divisions_2016_noterr_carto, overwrite = T)
+
+
+
+
+
+
 
 
 
