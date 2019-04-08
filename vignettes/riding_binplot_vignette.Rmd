@@ -113,6 +113,7 @@ left_join(fed_2015_cloropleth, fed_2015, by = "riding_code") %>%
                     values = c("mediumturquoise", "blue", "springgreen3", "red", "orange")) +
   ggtitle("Tile grid map of 2015 federal election results") +
   theme_mapcan()
+
 ```
 
 

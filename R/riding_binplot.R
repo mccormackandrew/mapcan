@@ -105,17 +105,31 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
         stop("Province (2-letter code) not valid, or provincial election boundaries for this province not supported yet.")
       }
     }
+
+    # MERGE RIDING DATA WITH RIDING COORDINATES ON riding_code
     riding.merged.dat <- base::merge(riding_coords, riding.df,
                                      by = "riding_code", all.y = TRUE, sort = TRUE)
     riding.merged.dat$riding_code <- as.numeric(riding.merged.dat$riding_code)
+
+    # ARRANGE
     if (arrange == TRUE) {
-      riding.merged.dat.arranged_a <- dplyr::arrange(riding.merged.dat, pr_alpha, value.col)
-      riding.merged.dat.arranged_a <- dplyr::select(riding.merged.dat.arranged_a, value.col)
-      riding.merged.dat.arranged_b <- dplyr::select(riding.merged.dat, -value.col)
-      riding.merged.dat.arranged_b <- dplyr::arrange(riding.merged.dat.arranged_b, pr_alpha, riding_code)
-      riding.merged.dat <- cbind(riding.merged.dat.arranged_a,
-                                 riding.merged.dat.arranged_b)
+      ## ARRANGE BY PROVINCE, THEN BY VALUES (SO ARRANGE VALUES WITHIN PROVINCES)
+      riding.merged.dat.arranged_a <- riding.merged.dat[order(riding.merged.dat$pr_alpha, riding.merged.dat$value.col), ]
+      ## SELECT JUST THE VALUE COL
+      riding.merged.dat.arranged_a <- riding.merged.dat.arranged_a[ , "value.col"]
+
+      riding.merged.dat.arranged_a <- data.frame(riding.merged.dat.arranged_a)
+      names(riding.merged.dat.arranged_a) <- "value.col"
+
+      ## SELECT EVERYTHING BUT THE VALUE COL
+      riding.merged.dat.arranged_b <- riding.merged.dat[ , !(colnames(riding.merged.dat) == "value.col")]
+      ## ARRANGE BY PROVINCE AND RIDING CODE
+      riding.merged.dat.arranged_b <- riding.merged.dat.arranged_b[order(riding.merged.dat.arranged_b$pr_alpha,
+                                                                         riding.merged.dat.arranged_b$riding_code), ]
+      # BIND VALUES TOGETHER
+      riding.merged.dat <- cbind(riding.merged.dat.arranged_a, riding.merged.dat.arranged_b)
     }
+
     gg <- ggplot2::ggplot()
     gg <- gg + ggplot2::scale_y_reverse()
     gg <- gg + ggplot2::geom_tile(data = riding.merged.dat,
@@ -160,15 +174,28 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
     }
     riding.df$riding_code <- as.numeric(riding.df$riding_code)
     riding_coords$riding_code <- as.numeric(riding_coords$riding_code)
-    riding.merged.dat <- dplyr::inner_join(riding_coords, riding.df)
+    riding.merged.dat <- base::merge(riding_coords, riding.df,
+                                     by = "riding_code", all.y = TRUE, sort = TRUE)
     riding.merged.dat$riding_code <- as.numeric(riding.merged.dat$riding_code)
+
+    # ARRANGE
     if (arrange == TRUE) {
-      riding.merged.dat.arranged_a <- dplyr::arrange(riding.merged.dat, pr_alpha, value.col)
-      riding.merged.dat.arranged_a <- dplyr::select(riding.merged.dat.arranged_a, value.col)
-      riding.merged.dat.arranged_b <- dplyr::select(riding.merged.dat, -value.col)
-      riding.merged.dat.arranged_b <- dplyr::arrange(riding.merged.dat.arranged_b, pr_alpha, riding_code)
-      riding.merged.dat <- cbind(riding.merged.dat.arranged_a,
-                                 riding.merged.dat.arranged_b)
+      ## ARRANGE BY PROVINCE, THEN BY VALUES (SO ARRANGE VALUES WITHIN PROVINCES)
+      riding.merged.dat.arranged_a <- riding.merged.dat[order(riding.merged.dat$pr_alpha, riding.merged.dat$value.col), ]
+      ## SELECT JUST THE VALUE COL
+      riding.merged.dat.arranged_a <- riding.merged.dat.arranged_a[ , "value.col"]
+
+      riding.merged.dat.arranged_a <- data.frame(riding.merged.dat.arranged_a)
+      names(riding.merged.dat.arranged_a) <- "value.col"
+
+      ## SELECT EVERYTHING BUT THE VALUE COL
+      riding.merged.dat.arranged_b <- riding.merged.dat[ , !(colnames(riding.merged.dat) == "value.col")]
+      ## ARRANGE BY PROVINCE AND RIDING CODE
+      riding.merged.dat.arranged_b <- riding.merged.dat.arranged_b[order(riding.merged.dat.arranged_b$pr_alpha,
+                                                                         riding.merged.dat.arranged_b$riding_code), ]
+      # BIND VALUES TOGETHER
+      riding.merged.dat <- cbind(riding.merged.dat.arranged_a, riding.merged.dat.arranged_b)
+
     }
     gg <- ggplot2::ggplot()
     gg <- gg + ggplot2::scale_y_reverse()
