@@ -5,8 +5,8 @@
 
 ## To install Rcartogram and getcartr ----------------------
 # First `brew install fftw` in command line, then:
-devtools::install_github("omegahat/Rcartogram")
-devtools::install_github('chrisbrunsdon/getcartr',subdir='getcartr')
+# devtools::install_github("omegahat/Rcartogram")
+# devtools::install_github('chrisbrunsdon/getcartr',subdir='getcartr')
 
 library(pacman)
 p_load(tidyverse, rgdal, rgeos, rmapshaper,
@@ -16,7 +16,7 @@ p_load(tidyverse, rgdal, rgeos, rmapshaper,
 ## Make provinces and territories cartogram--------------------
 
 # Import map data
-load("data/provinces_territories_spdf.rda")
+load("data-raw/simplified_shapefiles/provinces_territories_spdf.rda")
 load("data/province_pop_annual.rda")
 
 # Merge in riding population and election data
@@ -202,7 +202,7 @@ load("data/census_pop2016.rda")
 # Merge in riding population and election data
 census_divisions_2016 <- merge(census_divisions_2016_spdf,
                                census_pop2016,
-                               by.x = "CDUID" , by.y = "census_division_code")
+                               by.x = "CDUID" , by.y = "census_code")
 
 # Compute area of each federal riding in km^2 area (unit: meters -> convert to square km)
 census_divisions_2016$area <- rgeos::gArea(census_divisions_2016, byid=TRUE) / (1000000)
@@ -223,7 +223,7 @@ census_divisions_2016_carto$id <- as.numeric(census_divisions_2016_carto$id)
 
 census_divisions_2016_carto <- left_join(census_divisions_2016_carto,
                                             census_pop2016,
-                                            by = c("id" = "census_division_code"))
+                                            by = c("id" = "census_code"))
 
 ## THESE VARIABLES IMPORTED FROM census_pop2016 IN left_join ABOVE. PROBABLY NOT NECESSARY.
 #census_divisions_2016_carto$pr_alpha <- dplyr::recode(census_divisions_2016_carto$province_sgc_code,
@@ -298,7 +298,7 @@ census_divisions_2016_noterr <- merge(census_divisions_2016_spdf[!(census_divisi
                                                                        "Nunavut",
                                                                        "Yukon")), ],
                                census_pop2016,
-                               by.x = "CDUID" , by.y = "census_division_code")
+                               by.x = "CDUID" , by.y = "census_code")
 
 
 # Compute area of each federal riding in km^2 area (unit: meters -> convert to square km)
@@ -319,7 +319,7 @@ census_divisions_2016_noterr_carto <- fortify(census_divisions_2016_noterr_carto
 census_divisions_2016_noterr_carto$id <- as.numeric(census_divisions_2016_noterr_carto$id)
 census_divisions_2016_noterr_carto <- left_join(census_divisions_2016_noterr_carto,
                                             census_pop2016,
-                                            by = c("id" = "census_division_code"))
+                                            by = c("id" = "census_code"))
 
 
 
@@ -337,7 +337,6 @@ census_divisions_2016_noterr_carto <- census_divisions_2016_noterr_carto %>%
 
 # Save data
 use_data(census_divisions_2016_noterr_carto, overwrite = T)
-
 
 
 
