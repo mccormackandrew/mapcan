@@ -14,7 +14,7 @@ p_load(tidyverse, rgdal, rgeos, rmapshaper, sp)
 provinces_territories <- rgdal::readOGR("data-raw/shapefile_data/provinces_territories", "lpr_000b16a_e")
 
 # Shapefile is unnecessarily large for creating plots, make smaller
-provinces_territories <- rmapshaper::ms_simplify(provinces_territories, keep = 0.01, keep_shapes = T)
+provinces_territories <- rmapshaper::ms_simplify(provinces_territories, keep = 0.003, keep_shapes = T)
 
 # Add projection
 provinces_territories <- sp::spTransform(provinces_territories,
@@ -88,7 +88,7 @@ use_data(provinces_territories, overwrite = T)
 federal_ridings <- rgdal::readOGR("data-raw/shapefile_data/federal_ridings", "lfed000b16a_e")
 
 # Shapefile is unnecessarily large for creating plots, make smaller
-federal_ridings <- rmapshaper::ms_simplify(federal_ridings, keep = 0.01, keep_shapes = T)
+federal_ridings <- rmapshaper::ms_simplify(federal_ridings, keep = 0.005, keep_shapes = T)
 
 
 # Add a projection
@@ -227,7 +227,7 @@ use_data(federal_ridings, overwrite = T)
 census_divisions_2016 <- rgdal::readOGR("data-raw/shapefile_data/census_divisions_2016", "lcd_000b16a_e")
 
 # Shapefile is unnecessarily large for creating plots, make smaller
-census_divisions_2016 <- rmapshaper::ms_simplify(census_divisions_2016, keep = 0.01, keep_shapes = T)
+census_divisions_2016 <- rmapshaper::ms_simplify(census_divisions_2016, keep = 0.005, keep_shapes = T)
 
 # Add projection
 census_divisions_2016 <- sp::spTransform(census_divisions_2016,
@@ -336,7 +336,7 @@ use_data(census_divisions_2016, overwrite = TRUE)
 quebec_prov_ridings2018 <- rgdal::readOGR("data-raw/shapefile_data/quebec_prov_ridings", "Circonscriptions_Çlectorales_2017_shapefile")
 
 # Shapefile is unnecessarily large for creating plots, make smaller
-quebec_prov_ridings2018 <- rmapshaper::ms_simplify(quebec_prov_ridings2018, keep = 0.05, keep_shapes = T)
+quebec_prov_ridings2018 <- rmapshaper::ms_simplify(quebec_prov_ridings2018, keep = 0.01, keep_shapes = T)
 
 # Add projection
 quebec_prov_ridings2018 <- sp::spTransform(quebec_prov_ridings2018,
