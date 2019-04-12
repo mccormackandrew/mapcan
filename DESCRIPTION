@@ -6,7 +6,7 @@ Authors@R: c(
     person("Andrew", "McCormack", email = "mccormack.andy@gmail.com", role = c("aut", "cre")),
     person("Aaron", "Erlich", email = "aaron.erlich@mcgill.ca", role = c("aut")))
 Maintainer: Andrew McCormack <mccormack.andy@gmail.com>
-Description: mapcan offers a variety of function that make it easy to plot standard choropleth maps as well as choropleth alternatives in ggplot.
+Description: A variety of functions that make it easy to plot standard choropleth maps as well as choropleth alternatives in ggplot2.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
