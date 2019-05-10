@@ -1,2 +1,2 @@
-# mapcan 0.0.0.9000
+# mapcan 0.0.1
 * This is the first release of mapcan

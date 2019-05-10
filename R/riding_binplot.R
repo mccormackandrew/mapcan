@@ -41,34 +41,34 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
           shape = "square", province, legend_name = "default")
 {
 
-
   if (is.symbol(substitute(riding_col))) {
     riding.col <- deparse(substitute(riding_col))
-  } else {
+  }
+  else {
     riding.col <- riding_col
   }
-
   if (legend_name == "default") {
     legend.name <- deparse(substitute(value_col))
-  } else {
+  }
+  else {
     legend.name <- legend_name
   }
-
   if (is.symbol(substitute(value_col))) {
     value.col <- deparse(substitute(value_col))
-  } else {
+  }
+  else {
     value.col <- value_col
   }
-
   if (is.symbol(substitute(province))) {
     province_chr <- deparse(substitute(province))
-  } else {
+  }
+  else {
     province_chr <- province
   }
-
   if (is.symbol(substitute(shape))) {
     shape_chr <- deparse(substitute(shape))
-  } else {
+  }
+  else {
     shape_chr <- shape
   }
 
@@ -78,20 +78,22 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
   riding.df <- riding.df[, c("riding_code", "value.col")]
 
 
-  # SQUARE TILE PLOTS
   if (shape_chr == "square") {
     if (provincial == FALSE) {
       if (year == 2015) {
-        riding_coords <- mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order ==
-                                                       2013, ]
+        riding_coords <-
+          mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order ==
+                                        2013,]
       }
       else if (year %in% c(2004, 2006, 2008, 2011)) {
-        riding_coords <- mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order ==
-                                                       2003, ]
+        riding_coords <-
+          mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order ==
+                                        2003,]
       }
       else if (year %in% c(1997, 2000)) {
-        riding_coords <- mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order ==
-                                                       1996, ]
+        riding_coords <-
+          mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order ==
+                                        1996,]
       }
       else {
         stop("Not a valid election year.")
@@ -102,39 +104,46 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
         riding_coords <- mapcan::quebec_riding_bins
       }
       else {
-        stop("Province (2-letter code) not valid, or provincial election boundaries for this province not supported yet.")
+        stop(
+          "Province (2-letter code) not valid, or provincial election boundaries for this province not supported yet."
+        )
       }
     }
-
-    # MERGE RIDING DATA WITH RIDING COORDINATES ON riding_code
-    riding.merged.dat <- base::merge(riding_coords, riding.df,
-                                     by = "riding_code", all.y = TRUE, sort = TRUE)
-    riding.merged.dat$riding_code <- as.numeric(riding.merged.dat$riding_code)
-
-    # ARRANGE
+    riding.merged.dat <- base::merge(
+      riding_coords,
+      riding.df,
+      by = "riding_code",
+      all.y = TRUE,
+      sort = TRUE
+    )
+    riding.merged.dat$riding_code <-
+      as.numeric(riding.merged.dat$riding_code)
     if (arrange == TRUE) {
-      ## ARRANGE BY PROVINCE, THEN BY VALUES (SO ARRANGE VALUES WITHIN PROVINCES)
-      riding.merged.dat.arranged_a <- riding.merged.dat[order(riding.merged.dat$pr_alpha, riding.merged.dat$value.col), ]
-      ## SELECT JUST THE VALUE COL
-      riding.merged.dat.arranged_a <- riding.merged.dat.arranged_a[ , "value.col"]
-
-      riding.merged.dat.arranged_a <- data.frame(riding.merged.dat.arranged_a)
+      riding.merged.dat.arranged_a <-
+        riding.merged.dat[order(riding.merged.dat$pr_alpha,
+                                riding.merged.dat$value.col),]
+      riding.merged.dat.arranged_a <-
+        riding.merged.dat.arranged_a[, "value.col"]
+      riding.merged.dat.arranged_a <-
+        data.frame(riding.merged.dat.arranged_a)
       names(riding.merged.dat.arranged_a) <- "value.col"
-
-      ## SELECT EVERYTHING BUT THE VALUE COL
-      riding.merged.dat.arranged_b <- riding.merged.dat[ , !(colnames(riding.merged.dat) == "value.col")]
-      ## ARRANGE BY PROVINCE AND RIDING CODE
-      riding.merged.dat.arranged_b <- riding.merged.dat.arranged_b[order(riding.merged.dat.arranged_b$pr_alpha,
-                                                                         riding.merged.dat.arranged_b$riding_code), ]
-      # BIND VALUES TOGETHER
-      riding.merged.dat <- cbind(riding.merged.dat.arranged_a, riding.merged.dat.arranged_b)
+      riding.merged.dat.arranged_b <- riding.merged.dat[,!(colnames(riding.merged.dat) == "value.col")]
+      riding.merged.dat.arranged_b <-
+        riding.merged.dat.arranged_b[order(
+          riding.merged.dat.arranged_b$pr_alpha,
+          riding.merged.dat.arranged_b$riding_code
+        ),]
+      riding.merged.dat <- cbind(riding.merged.dat.arranged_a,
+                                 riding.merged.dat.arranged_b)
     }
-
     gg <- ggplot2::ggplot()
     gg <- gg + ggplot2::scale_y_reverse()
-    gg <- gg + ggplot2::geom_tile(data = riding.merged.dat,
-                                  ggplot2::aes_string(x = "y", y = "x", fill = "value.col"),
-                                  color = riding_border_col, size = riding_border_size)
+    gg <- gg + ggplot2::geom_tile(
+      data = riding.merged.dat,
+      ggplot2::aes_string(x = "y", y = "x", fill = "value.col"),
+      color = riding_border_col,
+      size = riding_border_size
+    )
     if (continuous == T) {
       gg <- gg + ggplot2::scale_fill_viridis_c(name = legend.name)
     }
@@ -145,20 +154,22 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
     gg <- gg + ggplot2::labs(x = NULL, y = NULL)
   }
 
-  # HEXAGONAL TILE PLOTS
   if (shape_chr == "hexagon") {
     if (provincial == FALSE) {
       if (year == 2015) {
-        riding_coords <- mapcan::federal_riding_hexagons[mapcan::federal_riding_hexagons$representation_order ==
-                                                           2013, ]
+        riding_coords <-
+          mapcan::federal_riding_hexagons[mapcan::federal_riding_hexagons$representation_order ==
+                                            2013,]
       }
       else if (year %in% c(2004, 2006, 2008, 2011)) {
-        riding_coords <- mapcan::federal_riding_hexagons[mapcan::federal_riding_hexagons$representation_order ==
-                                                           2003, ]
+        riding_coords <-
+          mapcan::federal_riding_hexagons[mapcan::federal_riding_hexagons$representation_order ==
+                                            2003,]
       }
       else if (year %in% c(1997, 2000)) {
-        riding_coords <- mapcan::federal_riding_hexagons[mapcan::federal_riding_hexagons$representation_order ==
-                                                           1996, ]
+        riding_coords <-
+          mapcan::federal_riding_hexagons[mapcan::federal_riding_hexagons$representation_order ==
+                                            1996,]
       }
       else {
         stop("Not a valid election year.")
@@ -169,39 +180,52 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
         riding_coords <- mapcan::quebec_riding_hexagons
       }
       else {
-        stop("Province (2-letter code) not valid, or provincial election boundaries for this province not supported yet.")
+        stop(
+          "Province (2-letter code) not valid, or provincial election boundaries for this province not supported yet."
+        )
       }
     }
+
+
     riding.df$riding_code <- as.numeric(riding.df$riding_code)
-    riding_coords$riding_code <- as.numeric(riding_coords$riding_code)
+    riding_coords$riding_code <-
+      as.numeric(riding_coords$riding_code)
+    riding_coords$ordering <- seq(1:nrow(riding_coords))
     riding.merged.dat <- base::merge(riding_coords, riding.df,
-                                     by = "riding_code", all.y = TRUE, sort = TRUE)
-    riding.merged.dat$riding_code <- as.numeric(riding.merged.dat$riding_code)
+                                     by = "riding_code")
+    riding.merged.dat <-
+      riding.merged.dat[order(riding.merged.dat$ordering),]
+    riding.merged.dat$riding_code <-
+      as.numeric(riding.merged.dat$riding_code)
 
-    # ARRANGE
     if (arrange == TRUE) {
-      ## ARRANGE BY PROVINCE, THEN BY VALUES (SO ARRANGE VALUES WITHIN PROVINCES)
-      riding.merged.dat.arranged_a <- riding.merged.dat[order(riding.merged.dat$pr_alpha, riding.merged.dat$value.col), ]
-      ## SELECT JUST THE VALUE COL
-      riding.merged.dat.arranged_a <- riding.merged.dat.arranged_a[ , "value.col"]
-
-      riding.merged.dat.arranged_a <- data.frame(riding.merged.dat.arranged_a)
+      riding.merged.dat.arranged_a <-
+        riding.merged.dat[order(riding.merged.dat$pr_alpha,
+                                riding.merged.dat$value.col),]
+      riding.merged.dat.arranged_a <-
+        riding.merged.dat.arranged_a[,
+                                     "value.col"]
+      riding.merged.dat.arranged_a <-
+        data.frame(riding.merged.dat.arranged_a)
       names(riding.merged.dat.arranged_a) <- "value.col"
-
-      ## SELECT EVERYTHING BUT THE VALUE COL
-      riding.merged.dat.arranged_b <- riding.merged.dat[ , !(colnames(riding.merged.dat) == "value.col")]
-      ## ARRANGE BY PROVINCE AND RIDING CODE
-      riding.merged.dat.arranged_b <- riding.merged.dat.arranged_b[order(riding.merged.dat.arranged_b$pr_alpha,
-                                                                         riding.merged.dat.arranged_b$riding_code), ]
-      # BIND VALUES TOGETHER
-      riding.merged.dat <- cbind(riding.merged.dat.arranged_a, riding.merged.dat.arranged_b)
-
+      riding.merged.dat.arranged_b <- riding.merged.dat[,!(colnames(riding.merged.dat) == "value.col")]
+      riding.merged.dat.arranged_b <-
+        riding.merged.dat.arranged_b[order(
+          riding.merged.dat.arranged_b$pr_alpha,
+          riding.merged.dat.arranged_b$riding_code
+        ),]
+      riding.merged.dat <- cbind(riding.merged.dat.arranged_a,
+                                 riding.merged.dat.arranged_b)
     }
     gg <- ggplot2::ggplot()
     gg <- gg + ggplot2::scale_y_reverse()
     gg <- gg + ggplot2::geom_polygon(data = riding.merged.dat,
-                                     ggplot2::aes_string(x = "long", y = "lat", group = "group",
-                                                fill = "value.col"))
+                                     ggplot2::aes_string(
+                                       x = "long",
+                                       y = "lat",
+                                       group = "group",
+                                       fill = "value.col"
+                                     ))
     if (continuous == T) {
       gg <- gg + ggplot2::scale_fill_viridis_c(name = legend.name)
     }
@@ -213,4 +237,3 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
   }
   return(gg)
 }
-

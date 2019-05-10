@@ -7,5 +7,4 @@
 
 0 errors | 0 warnings | 1 note
 
-* This is a resubmission
-* I have put single quotes around ggplot2 in the submission, which was suggested
+* I need to update in order to fix a very small, but consequential error.
