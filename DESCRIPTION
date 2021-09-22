@@ -18,5 +18,6 @@ Imports:
     ggplot2,
     magrittr
 Suggests: 
-    knitr
-VignetteBuilder: knitr, rmarkdown
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
