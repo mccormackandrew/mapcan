@@ -220,9 +220,9 @@ jobs:
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
-      - name: Test coverage
-        run: covr::codecov()
-        shell: Rscript {0}
+      # - name: Test coverage
+      #   run: covr::codecov()
+      #   shell: Rscript {0}
 
 
   pkgdown:

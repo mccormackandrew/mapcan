@@ -1,6 +1,7 @@
 ^CRAN-RELEASE$
 ^cran-comments\.md$
 ^LICENSE\.md$
+^\.github$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
