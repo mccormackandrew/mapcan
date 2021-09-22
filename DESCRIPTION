@@ -19,4 +19,4 @@ Imports:
     magrittr
 Suggests: 
     knitr
-VignetteBuilder: knitr
+VignetteBuilder: knitr, rmarkdown
