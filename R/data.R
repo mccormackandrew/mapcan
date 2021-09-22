@@ -216,7 +216,7 @@
 #'
 #' @description A data set with information on Canadian federal election results, dating back to 1997
 #'
-#' @format A data.frame with 37111 rows and 12 variables:
+#' @format A data.frame with 2510 rows and 12 variables:
 #' \describe{
 #'   \item{riding_name_english}{Federal electoral district name in English.}
 #'   \item{riding_name_french}{Federal electoral district name in French.}

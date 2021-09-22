@@ -4,7 +4,7 @@ Title: Tools for Plotting Canadian Choropleth Maps and Choropleth Alternatives
 Version: 0.0.2
 Authors@R: c(
     person("Andrew", "McCormack", email = "mccormack.andy@gmail.com", role = c("aut", "cre")),
-    person("Aaron", "Erlich", email = "aaron.erlich@mcgill.ca", role = c("aut"))),
+    person("Aaron", "Erlich", email = "aaron.erlich@mcgill.ca", role = c("aut")),
     person("Richard", "Martin-Nielsen", email = "richard.martin@alumni.utoronto.ca", role = c("ctb")))
 Maintainer: Andrew McCormack <mccormack.andy@gmail.com>
 Description: A variety of functions that make it easy to plot standard choropleth maps as well as choropleth alternatives in 'ggplot2'.
