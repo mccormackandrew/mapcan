@@ -128,7 +128,7 @@
 #' @description A data set with geographic information for Canadian census divisions, census boundary divisions
 #' distorted by population size, territories excluded
 #'
-#' @format A data.frame with 35410 rows and 18 variables:
+#' @format A data.frame with 25329 rows and 13 variables:
 #' \describe{
 #'   \item{long}{Longitude}
 #'   \item{lat}{Latitude}
@@ -160,7 +160,7 @@
 #' @description A data set with geographic information for Canadian census divisions, census boundary divisions
 #' distorted by population size, territories included
 #'
-#' @format A data.frame with 57513 rows and 18 variables:
+#' @format A data.frame with 38595 rows and 13 variables:
 #' \describe{
 #'   \item{long}{Longitude}
 #'   \item{lat}{Latitude}
@@ -216,7 +216,7 @@
 #'
 #' @description A data set with information on Canadian federal election results, dating back to 1997
 #'
-#' @format A data.frame with 37111 rows and 12 variables:
+#' @format A data.frame with 2510 rows and 12 variables:
 #' \describe{
 #'   \item{riding_name_english}{Federal electoral district name in English.}
 #'   \item{riding_name_french}{Federal electoral district name in French.}
@@ -301,7 +301,7 @@
 #'
 #' @description A data set with geographic information for Quebec provincial ridings
 #'
-#' @format A data.frame with 23995 rows and 11 variables:
+#' @format A data.frame with 5672 rows and 11 variables:
 #' \describe{
 #'   \item{long}{y-axis of riding hexagons}
 #'   \item{lat}{x-axis of riding hexagons}
@@ -372,7 +372,7 @@
 #'
 #' @description A data set with information on Canadian federal election results, dating back to 1997
 #'
-#' @format A data.frame with 37111 rows and 12 variables:
+#' @format A data.frame with 338 rows and 4 variables:
 #' \describe{
 #'   \item{party}{Winning party in riding}
 #'   \item{riding_code}{Riding code}

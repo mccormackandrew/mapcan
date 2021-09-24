@@ -37,13 +37,13 @@ Although Canada is a very large country, around 80% of its population is concent
 
 #### Preparing the data
 
-`riding_binplot()` requires a data frame that includes a riding-level variable as well as numeric riding code variable. Specify the riding-level variable of interest in the `value_col` argument. Specify the numeric riding code variable in the `riding_col` argument. For instance, we may want to create a tile plot for the seat distribution of the 2015 federal election. 
+`riding_binplot()` requires a data frame that includes a riding-level variable as well as numeric riding code variable. Specify the riding-level variable of interest in the `value_col` argument. Specify the numeric riding code variable in the `riding_col` argument. For instance, we may want to create a tile plot for the seat distribution of the 2019 federal election. 
 
-Luckily, `mapcan` comes with built-in federal election data (the `federal_election_results` data frame) that dates back to 1996 with variables for riding codes/names, provinces, population, voter turnout and the winning party for each riding. Let's restrict `federal_election_results` to include only observations (ridings) from the 2015 election. Because we only need (1) a riding characteristic variable and (2) a riding code variable, we can select only these columns from the data.
+Luckily, `mapcan` comes with built-in federal election data (the `federal_election_results` data frame) that dates back to 1996 with variables for riding codes/names, provinces, population, voter turnout and the winning party for each riding. Let's restrict `federal_election_results` to include only observations (ridings) from the 2019 election. Because we only need (1) a riding characteristic variable and (2) a riding code variable, we can select only these columns from the data.
 
 ```{r}
-fed_2015 <- federal_election_results %>%
-  filter(election_year == 2015) %>%
+fed_2019 <- federal_election_results %>%
+  filter(election_year == 2019) %>%
   dplyr::select(riding_code, party)
 ```
 
@@ -52,7 +52,7 @@ fed_2015 <- federal_election_results %>%
 This new data frame has the two columns that we need: one to specify the riding code (`riding_code`) and another to specify a riding-level characteristic of interest (`party`). Let's look at a sample:
 
 ```{r}
-fed_2015 %>%
+fed_2019 %>%
   sample_n(10)
 ```
 
@@ -63,55 +63,55 @@ Looking good.
 Use `continuous = TRUE` for continuous variables and `continuous = FALSE` for categorical variables. `party` is a categorical variable, so we will specify `continuous = FALSE`:
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
-fed_2015_bins <- fed_2015 %>%
+fed_2019_bins <- fed_2019 %>%
   riding_binplot(value_col = party, 
                  continuous = FALSE) +
-  ggtitle("Tile grid map of 2015 federal election results")
-fed_2015_bins
+  ggtitle("Tile grid map of 2019 federal election results")
+fed_2019_bins
 ```
 
 You will notice that the axis text has no substantive significance (it just the coordinates of the tiles). You can remove it, along with the axis ticks and background grid using `theme_mapcan` function, a `ggplot` theme that is part of the `mapcan` package.
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
-fed_2015_bins <- fed_2015_bins +
+fed_2019_bins <- fed_2019_bins +
   theme_mapcan()
 
-fed_2015_bins
+fed_2019_bins
 ```
 
 You will also notice that the colours provided by default from `riding_binplot` are not ideal for a tile plot with Canadian political parties. Because `riding_binplot` simply creates a `ggplot` object, we can override the `riding_binplot` scale and add our own:  
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
-fed_2015_bins +
+fed_2019_bins +
   scale_fill_manual(name = "Party",
-                    values = c("mediumturquoise", "blue", "springgreen3", "red", "orange"))
+                    values = c("mediumturquoise", "blue", "springgreen3", "grey", "red", "orange"))
 ```
 
 In this tile grid map, tiles are arranged by province yet, because seats are highly concentrated in urban areas, each tile only roughly corresponds to geographic location of the riding it represents. The `arrange = TRUE` option provides a better representation of the disribution of variables within provinces when the exact location of the riding is not relevant.
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
-fed_2015 %>%
+fed_2019 %>%
   riding_binplot(value = party, 
                  continuous = FALSE,
                  arrange = TRUE) + 
   theme_mapcan() + 
   scale_fill_manual(name = "Party",
-                    values = c("mediumturquoise", "blue", "springgreen3", "red", "orange")) +
-  ggtitle("Tile grid map of 2015 federal election results")
+                    values = c("mediumturquoise", "blue", "springgreen3", "grey", "red", "orange")) +
+  ggtitle("Tile grid map of 2019 federal election results")
 ```
 
-Compared to a standard cloropeth map, the tile grid map gives us a better sense of how the 2015 federal election shaped up:
+Compared to a standard cloropeth map, the tile grid map gives us a better sense of how the 2019 federal election shaped up:
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
-fed_2015_cloropleth <- mapcan(boundaries = ridings, type = standard)
+fed_2019_cloropleth <- mapcan(boundaries = ridings, type = standard)
 
-left_join(fed_2015_cloropleth, fed_2015, by = "riding_code") %>%
+left_join(fed_2019_cloropleth, fed_2019, by = "riding_code") %>%
   ggplot(aes(long, lat, group = group, fill = party)) +
   geom_polygon() + 
   coord_fixed() + 
   scale_fill_manual(name = "Party",
-                    values = c("mediumturquoise", "blue", "springgreen3", "red", "orange")) +
-  ggtitle("Tile grid map of 2015 federal election results") +
+                    values = c("mediumturquoise", "blue", "springgreen3", "grey", "red", "orange")) +
+  ggtitle("Tile grid map of 2019 federal election results") +
   theme_mapcan()
 
 ```
@@ -125,46 +125,46 @@ Note that the data can be tidied up using `dplyr` and piped directly into `ridin
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
 federal_election_results %>%
-  filter(election_year == 2015) %>%
+  filter(election_year == 2019) %>%
   riding_binplot(value = voter_turnout,
                  continuous = TRUE) +
-  ggtitle("Tile grid map of 2015 federal election voter turnout")
+  ggtitle("Tile grid map of 2019 federal election voter turnout")
 ```
 
 Once again, because we care little about the axis grid and axis values, we can use the `theme_mapcan()` theme:
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
 federal_election_results %>%
-  filter(election_year == 2015) %>%
+  filter(election_year == 2019) %>%
   riding_binplot(value = voter_turnout,
                  continuous = TRUE) +
   theme_mapcan() +
-  ggtitle("Tile grid map of 2015 federal election voter turnout")
+  ggtitle("Tile grid map of 2019 federal election voter turnout")
 ```
 
 Like with the election results that are plotted above, we may want to arrange the values of voter turnout within provinces. Fortunately, we can also use the `arrange = TRUE` argument when the riding-level variable is continuous. 
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
 federal_election_results %>%
-  filter(election_year == 2015) %>%
+  filter(election_year == 2019) %>%
   riding_binplot(value = voter_turnout,
                  continuous = TRUE,
                  arrange = TRUE) +
   theme_mapcan() +
-  ggtitle("Tile grid map of 2015 federal election voter turnout")
+  ggtitle("Tile grid map of 2019 federal election voter turnout")
 ```
 
 If squares are not your jam, you can also use hexagons with the `shape = hexagon` argument. Note that the default is `shape = square`.
 
 ```{r fig.width = 8, fig.height=4, warning = FALSE}
 federal_election_results %>%
-  filter(election_year == 2015) %>%
+  filter(election_year == 2019) %>%
   riding_binplot(value = voter_turnout,
                  continuous = TRUE,
                  arrange = TRUE,
                  shape = "hexagon") +
   theme_mapcan() +
-  ggtitle("Hexagon grid map of 2015 federal election voter turnout")
+  ggtitle("Hexagon grid map of 2019 federal election voter turnout")
 ```
 
 

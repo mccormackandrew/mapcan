@@ -3,7 +3,7 @@ library(devtools)
 
 # Creating a Dataset of Canadian federal election results by riding ---------------------------
 
-## Canadian election results by riding for the 1997, 200, 2004, 2006, 2008, 2011, and 2015 elections.
+## Canadian election results by riding for the 1997, 2000, 2004, 2006, 2008, 2011, 2015 and 2019 elections.
 ## These data were obtained from the Elections Canada
 ## website: http://www.elections.ca/content.aspx?section=ele&dir=pas&document=index&lang=e.
 
@@ -39,7 +39,7 @@ election1997_2000 <- election1997_2000 %>%
 
 
 
-# 2004 to 2015 election results ----------------------------------------------------------------------------
+# 2004 to 2019 election results ----------------------------------------------------------------------------
 
 ### 2004
 # File downloaded: "Table 11: Voting results, by electoral district", renamed to `2004_election_results.csv`.
@@ -61,7 +61,9 @@ election1997_2000 <- election1997_2000 %>%
 # File downloaded: "Table 11: Voting results, by electoral district", renamed to `2015_election_results.csv`.
 # Source: http://www.elections.ca/content.aspx?section=res&dir=rep/off/42gedata&document=summary&lang=e
 
-
+### 2019
+# File downloaded: "Table 11: Voting results by electoral district", renamed to `2019_election_results.csv`.
+# Source: https://www.elections.ca/content.aspx?section=res&dir=rep/off/43gedata&document=summary&lang=e
 
 
 ## Because of some minor inconsistencies in naming and variables,
@@ -75,7 +77,7 @@ election_file_names <- paste0("data-raw/election_results/",
 election_files <- lapply(election_file_names, function(x) read.csv(x, fileEncoding="latin1", stringsAsFactors = F))
 
 ## Create a vector to give unique election_year column to each dataframe in the list
-election_years <- c(2004, 2006, 2008, 2011, 2015)
+election_years <- c(2004, 2006, 2008, 2011, 2015, 2019)
 
 ## Assign unique election_year column to each dataframe in the list
 for(i in 1:length(election_files)) {
@@ -111,6 +113,10 @@ names(election_files[[5]]) <- c("province", "riding", "riding_code", "population
                                 "total_polls", "valid_ballots", "valid_ballots_pct", "rejected_ballots",
                                 "rejected_ballots_pct", "total_ballots", "voter_turnout", "candidate", "election_year")
 
+names(election_files[[6]]) <- c("province", "riding", "riding_code", "population", "electors",
+                                "total_polls", "valid_ballots", "valid_ballots_pct", "rejected_ballots",
+                                "rejected_ballots_pct", "total_ballots", "voter_turnout", "candidate", "election_year")
+
 ## Select and order variables of interest
 for(i in 1:length(election_files)) {
   election_files[[i]] <- election_files[[i]] %>%
@@ -118,71 +124,71 @@ for(i in 1:length(election_files)) {
 }
 
 ## Merge the dataframes together!
-elections_2004_2015 <- do.call("rbind", election_files)
+elections_2004_2019 <- do.call("rbind", election_files)
 
-elections_2004_2015$party <- rep(NA, nrow(elections_2004_2015))
+elections_2004_2019$party <- rep(NA, nrow(elections_2004_2019))
 
 ## Create a party variable
-for(i in 1:nrow(elections_2004_2015)) {
-  if (grepl("Liberal", elections_2004_2015$candidate[i]) == T) {
-    elections_2004_2015$party[i] <- "Liberal"
-  } else if (grepl("Conservative", elections_2004_2015$candidate[i]) == T) {
-    elections_2004_2015$party[i] <- "Conservative"
-  } else if (grepl("N.D.P.|NDP|New Democratic Party", elections_2004_2015$candidate[i]) == T) {
-    elections_2004_2015$party[i] <- "NDP"
-  } else if (grepl("Bloc Québécois|Bloc QuÃ©bÃ©cois", elections_2004_2015$candidate[i]) == T) {
-    elections_2004_2015$party[i] <- "Bloc"
-  } else if (grepl("Green", elections_2004_2015$candidate[i]) == T) {
-    elections_2004_2015$party[i] <- "Green"
-  } else if (grepl("Independent|No Affiliation", elections_2004_2015$candidate[i]) == T) {
-    elections_2004_2015$party[i] <- "Independent"
+for(i in 1:nrow(elections_2004_2019)) {
+  if (grepl("Liberal", elections_2004_2019$candidate[i]) == T) {
+    elections_2004_2019$party[i] <- "Liberal"
+  } else if (grepl("Conservative", elections_2004_2019$candidate[i]) == T) {
+    elections_2004_2019$party[i] <- "Conservative"
+  } else if (grepl("N.D.P.|NDP|New Democratic Party", elections_2004_2019$candidate[i]) == T) {
+    elections_2004_2019$party[i] <- "NDP"
+  } else if (grepl("Bloc Québécois|Bloc QuÃ©bÃ©cois", elections_2004_2019$candidate[i]) == T) {
+    elections_2004_2019$party[i] <- "Bloc"
+  } else if (grepl("Green", elections_2004_2019$candidate[i]) == T) {
+    elections_2004_2019$party[i] <- "Green"
+  } else if (grepl("Independent|No Affiliation", elections_2004_2019$candidate[i]) == T) {
+    elections_2004_2019$party[i] <- "Independent"
   } else {
-    elections_2004_2015$party[i] <-  elections_2004_2015$party[i]
+    elections_2004_2019$party[i] <-  elections_2004_2019$party[i]
   }
 }
 
 
-elections_2004_2015$candidate <- gsub("Conservative/conservateur|Conservative/Conservateur|Liberal/Libéral|N.D.P./N.P.D.|
+elections_2004_2019$candidate <- gsub("Conservative/conservateur|Conservative/Conservateur|Liberal/Libéral|N.D.P./N.P.D.|
      |Bloc Québécois/Bloc Québécois|No Affiliation/Aucune appartenance|Independent/Indépendant|
      |NDP-New Democratic Party/NPD-Nouveau Parti démocratique|NDP-New Democratic Party/NPD-Nouveau Parti dÃ©mocratique|
-     |Green Party/Parti Vert|Liberal/LibÃ©ral|Bloc QuÃ©bÃ©cois/Bloc QuÃ©bÃ©cois", "", elections_2004_2015$candidate)
+     |Green Party/Parti Vert|Liberal/LibÃ©ral|Bloc QuÃ©bÃ©cois/Bloc QuÃ©bÃ©cois", "", elections_2004_2019$candidate)
 
-elections_2004_2015$candidate <- trimws(elections_2004_2015$candidate)
+elections_2004_2019$candidate <- trimws(elections_2004_2019$candidate)
 
-elections_2004_2015 <- elections_2004_2015 %>%
+elections_2004_2019 <- elections_2004_2019 %>%
   separate(riding, c("riding_name_english", "riding_name_french"), sep = "/")
 
-for(i in 1:nrow(elections_2004_2015)) {
-  if (is.na(elections_2004_2015$riding_name_french[i])) {
-    elections_2004_2015$riding_name_french[i] <- elections_2004_2015$riding_name_english[i]
+for(i in 1:nrow(elections_2004_2019)) {
+  if (is.na(elections_2004_2019$riding_name_french[i])) {
+    elections_2004_2019$riding_name_french[i] <- elections_2004_2019$riding_name_english[i]
   } else {
-    elections_2004_2015$riding_name_french[i] <- elections_2004_2015$riding_name_english[i]
+    elections_2004_2019$riding_name_french[i] <- elections_2004_2019$riding_name_english[i]
   }
 }
 
 
 
-elections_2004_2015$province[elections_2004_2015$province ==
+elections_2004_2019$province[elections_2004_2019$province ==
                                "Newfoundland and Labrador/Terre-Neuve-et-Labrador"] <- "Newfoundland and Labrador"
-elections_2004_2015$province[elections_2004_2015$province ==
+elections_2004_2019$province[elections_2004_2019$province ==
                                "Prince Edward Island/Île-du-Prince-Édouard"] <- "Prince Edward Island"
-elections_2004_2015$province[elections_2004_2015$province %in%
+elections_2004_2019$province[elections_2004_2019$province %in%
                                c("Nova Scotia/Nouvelle-Écosse",
                                  "Nova Scotia/Nouvelle-Ã\u0089cosse")] <- "Nova Scotia"
-elections_2004_2015$province[elections_2004_2015$province ==
+elections_2004_2019$province[elections_2004_2019$province ==
                                "New Brunswick/Nouveau-Brunswick"] <- "New Brunswick"
-elections_2004_2015$province[elections_2004_2015$province ==
+elections_2004_2019$province[elections_2004_2019$province ==
                                "British Columbia/Colombie-Britannique"] <- "British Columbia"
-elections_2004_2015$province[elections_2004_2015$province ==
+elections_2004_2019$province[elections_2004_2019$province ==
                                "Northwest Territories/Territoires du Nord-Ouest"] <- "Northwest Territories"
-elections_2004_2015$province[elections_2004_2015$province ==
+elections_2004_2019$province[elections_2004_2019$province ==
                                "Prince Edward Island/Ã\u008ele-du-Prince-Ã\u0089douard"] <- "Prince Edward Island"
-elections_2004_2015$province[elections_2004_2015$province %in%
+elections_2004_2019$province[elections_2004_2019$province %in%
                                c("Quebec/Québec", "Quebec/QuÃ©bec")] <- "Quebec"
 
 # Merging all the elections together -----------------------------------
 
-federal_election_results <- rbind(election1997_2000, elections_2004_2015)
+federal_election_results <- rbind(election1997_2000, elections_2004_2019)
 
 
 # Add additional province identifiers -----------------------------------
