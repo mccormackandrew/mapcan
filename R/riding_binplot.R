@@ -80,7 +80,7 @@ riding_binplot <- function(riding_data, riding_col = riding_code, value_col, con
 
   if (shape_chr == "square") {
     if (provincial == FALSE) {
-      if (year == 2015) {
+      if (year >= 2015) {
         riding_coords <-
           mapcan::federal_riding_bins[mapcan::federal_riding_bins$representation_order ==
                                         2013,]
